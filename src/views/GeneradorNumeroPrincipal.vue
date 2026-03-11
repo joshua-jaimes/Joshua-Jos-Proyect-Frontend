@@ -63,21 +63,7 @@
                       <input v-model="form.birthdate" type="date" class="form-input" />
                     </div>
                   </div>
-
-                  <!-- Reading Type -->
-                  <div class="form-group">
-                    <label class="form-label">Tipo de Lectura</label>
-                    <div class="reading-buttons">
-                      <button type="button" class="reading-btn active">
-                        <q-icon name="stars" size="sm" />
-                        <span>Esencial</span>
-                      </button>
-                      <button type="button" class="reading-btn">
-                        <q-icon name="timeline" size="sm" />
-                        <span>Predictiva</span>
-                      </button>
-                    </div>
-                  </div>
+                  
 
                   <!-- Submit Button -->
                   <button type="button" class="submit-btn cosmic-pulse" @click="generarLectura" :disabled="cargando">
@@ -1259,4 +1245,5 @@ $text-gray-dark: #9ca3af;
     opacity: 0.5;
   }
 }
+
 </style>
