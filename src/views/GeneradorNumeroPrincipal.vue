@@ -12,15 +12,13 @@
 
         <div class="navbar-menu hide-lt-md">
           <a href="#" class="nav-link active">Generador</a>
-          <a href="#" class="nav-link">Historial</a>
-          <a href="#" class="nav-link">Carta Astral</a>
-          <a href="#" class="nav-link">Membresía</a>
+          
+          <router-link :to="{ name: 'MembresiasYPagos' }" class="nav-link">Membresía</router-link>
         </div>
 
         <div class="user-profile hide-lt-md">
           <div class="user-info">
-            <span class="user-name">Sofia R.</span>
-            <span class="user-plan">Plan Místico Pro</span>
+            
           </div>
           <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuDIRWmWe95HA1QP-6296LakYAL2vTUkDsNeRi-uPxvXpAzFelIZ8MhJT_n6pg580KS4uE3Odv5IWV9nd_SuAmZ4ruTzB9Gs8wypmFIYAFfRK3MWH4t5zqs7b_ZesmayBxxTC8G4XM2ZQnj_YOF6qje4Z8FUzxjv_VImhOzQzAsCyDlB7B9HOmts_EX94WxbC5Dkwp4DyAESQKCxZ5U8ypBas6g-7wojP8F18HHZe4ELVLj-cLV88erL747spejC55DXO7hxwHk7Jhc" alt="Sofia" class="user-avatar" />
         </div>
@@ -82,84 +80,22 @@
                   </div>
 
                   <!-- Submit Button -->
-                  <button type="button" class="submit-btn cosmic-pulse">
-                    <q-icon name="auto_awesome" size="sm" />
-                    <span>Generar Interpretación IA</span>
+                  <button type="button" class="submit-btn cosmic-pulse" @click="generarLectura" :disabled="cargando">
+                    <q-spinner v-if="cargando" size="sm" class="q-mr-sm" />
+                    <q-icon v-else name="auto_awesome" size="sm" />
+                    <span>{{ cargando ? 'Generando...' : 'Generar Interpretación IA' }}</span>
                   </button>
                 </form>
               </div>
             </div>
 
-            <!-- Membership Card -->
-            <div class="membership-card">
-              <div class="membership-gradient"></div>
-              <div class="membership-content">
-                <div class="membership-header">
-                  <div>
-                    <h3 class="membership-title">Membresía Pro</h3>
-                    <p class="membership-date">Renueva en 12 días</p>
-                  </div>
-                  <span class="active-badge">Activa</span>
-                </div>
 
-                <div class="credits-section">
-                  <div class="credits-label">
-                    <span>Créditos IA</span>
-                    <span class="credits-value">45 / 50</span>
-                  </div>
-                  <div class="progress-bar">
-                    <div class="progress-fill" style="width: 90%"></div>
-                  </div>
-                </div>
-
-                <button class="manage-btn">
-                  <span>Gestionar Plan</span>
-                  <q-icon name="arrow_forward" size="sm" />
-                </button>
-              </div>
-            </div>
           </div>
 
           <!-- Right Column: Results -->
           <div class="right-column">
             <!-- Quick Stats -->
-            <div class="stats-grid">
-              <!-- Life Path Number -->
-              <div class="stat-card">
-                <div class="card-glow"></div>
-                <q-icon name="alt_route" size="xl" class="card-bg-icon" />
-                <h3 class="stat-label">Número de Vida</h3>
-                <div class="stat-number">
-                  <span class="number">7</span>
-                  <span class="name">El Buscador</span>
-                </div>
-                <p class="stat-desc">Búsqueda de la verdad, análisis profundo y misticismo.</p>
-              </div>
-
-              <!-- Soul Number -->
-              <div class="stat-card">
-                <div class="card-glow"></div>
-                <q-icon name="favorite_border" size="xl" class="card-bg-icon" />
-                <h3 class="stat-label">Número de Alma</h3>
-                <div class="stat-number">
-                  <span class="number">9</span>
-                  <span class="name">El Humanitario</span>
-                </div>
-                <p class="stat-desc">Compasión universal, sacrificio y cierre de ciclos.</p>
-              </div>
-
-              <!-- Destiny Number -->
-              <div class="stat-card">
-                <div class="card-glow"></div>
-                <q-icon name="explore" size="xl" class="card-bg-icon" />
-                <h3 class="stat-label">Número de Destino</h3>
-                <div class="stat-number">
-                  <span class="number">4</span>
-                  <span class="name">El Constructor</span>
-                </div>
-                <p class="stat-desc">Orden, servicio, estabilidad y construcción sólida.</p>
-              </div>
-            </div>
+            
 
             <!-- AI Interpretation -->
             <div class="interpretation-card">
@@ -171,119 +107,58 @@
                   <h3 class="interpretation-title">Interpretación Cósmica IA</h3>
                 </div>
                 <div class="header-actions">
-                  <button class="action-btn" title="Copiar">
-                    <q-icon name="content_copy" size="sm" />
+                  <button class="action-btn" title="Copiar" @click="copiarPrincipal">
+                    <q-icon :name="copiadoPrincipal ? 'check' : 'content_copy'" size="sm" />
                   </button>
-                  <button class="action-btn" title="Guardar PDF">
+                  <button class="action-btn" title="Guardar TXT" @click="descargarTxtPrincipal">
+                    <q-icon name="text_snippet" size="sm" />
+                  </button>
+                  <button class="action-btn" title="Guardar PDF" @click="descargarPdfPrincipal">
                     <q-icon name="picture_as_pdf" size="sm" />
-                  </button>
-                  <button class="action-btn" title="Compartir">
-                    <q-icon name="share" size="sm" />
                   </button>
                 </div>
               </div>
 
               <div class="interpretation-content">
-                <div class="intro-block">
-                  <p class="intro-greeting">Hola Elena,</p>
-                  <p>Tu perfil numerológico presenta una combinación fascinante entre la introspección profunda del <span class="highlight">7</span> y la estructura pragmática del <span class="highlight">4</span>. Aquí está tu análisis detallado para este ciclo.</p>
+
+                <!-- Estado: cargando -->
+                <div v-if="cargando" class="intro-block">
+                  <p class="intro-greeting">Generando tu lectura cósmica...</p>
                 </div>
 
-                <div class="content-sections">
-                  <h4 class="section-title">
-                    <q-icon name="psychology" size="sm" />
-                    Análisis de Personalidad
-                  </h4>
-                  <p>Como Número de Vida 7, posees una mente analítica natural. No te conformas con las apariencias superficiales; necesitas entender el "por qué" y el "cómo" de todo lo que te rodea.</p>
-                  <p>La clave para ti, Elena, está en usar tu intelecto (7) para crear sistemas tangibles y duraderos (4). No te pierdas solo en la teoría.</p>
+                <!-- Estado: error -->
+                <div v-else-if="error" class="intro-block">
+                  <p class="intro-greeting">{{ error }}</p>
+                </div>
 
-                  <div class="challenges-grid">
-                    <div class="challenge-box">
-                      <h5 class="box-title challenges">Desafíos</h5>
-                      <ul class="challenge-list">
-                        <li>Tendencia al aislamiento excesivo.</li>
-                        <li>Rigidez mental cuando las cosas cambian.</li>
-                        <li>Escepticismo que bloquea la intuición.</li>
-                      </ul>
-                    </div>
-                    <div class="challenge-box">
-                      <h5 class="box-title potentials">Potencialidades</h5>
-                      <ul class="challenge-list">
-                        <li>Capacidad de especialización única.</li>
-                        <li>Honestidad y lealtad inquebrantables.</li>
-                        <li>Resolución de problemas complejos.</li>
-                      </ul>
-                    </div>
+                <!-- Estado: lectura generada -->
+                <div v-else-if="lectura">
+                  <div class="intro-block">
+                    <p class="intro-greeting">Tu Lectura Principal</p>
                   </div>
-
-                  <h4 class="section-title">
-                    <q-icon name="event" size="sm" />
-                    Proyección de Ciclo Actual
-                  </h4>
-                  <p>Actualmente estás transitando un Año Personal 5. Esto introduce una energía dinámica que contrasta con tu naturaleza 4. Prepárate para cambios inesperados y nuevas oportunidades de aprendizaje.</p>
+                  <div class="content-sections">
+                    <p style="white-space: pre-line; line-height: 1.8;">{{ lectura.contenido.replace(/\*\*/g, '') }}</p>
+                  </div>
+                  <!-- Botones de acción -->
+                  <div style="display:flex;gap:0.75rem;flex-wrap:wrap;margin-top:1.25rem">
+                    <button class="submit-btn" style="padding:8px 18px;font-size:0.85rem" @click="copiarPrincipal" :title="copiadoPrincipal ? '¡Copiado!' : 'Copiar lectura'">
+                      <q-icon :name="copiadoPrincipal ? 'check' : 'content_copy'" size="sm" />
+                      {{ copiadoPrincipal ? '¡Copiado!' : 'Copiar lectura' }}
+                    </button>
+                    <button class="submit-btn" style="padding:8px 18px;font-size:0.85rem" @click="descargarTxtPrincipal" title="Descargar TXT">
+                      <q-icon name="text_snippet" size="sm" />
+                      Descargar TXT
+                    </button>
+                    <button class="submit-btn" style="padding:8px 18px;font-size:0.85rem" @click="descargarPdfPrincipal" title="Descargar PDF">
+                      <q-icon name="picture_as_pdf" size="sm" />
+                      Descargar PDF
+                    </button>
+                  </div>
                 </div>
-              </div>
 
-              <div class="interpretation-footer">
-                <button class="regenerate-btn">
-                  <q-icon name="refresh" size="sm" />
-                  <span>Regenerar con nuevo enfoque</span>
-                </button>
               </div>
             </div>
 
-            <!-- Energy Balance -->
-            <div class="balance-card">
-              <h3 class="balance-title">Balance Energético</h3>
-              <div class="balance-content">
-                <div class="radar-chart">
-                  <div class="radar-circles"></div>
-                  <div class="balance-label">Equilibrio</div>
-                </div>
-
-                <div class="balance-bars">
-                  <div class="bar-item">
-                    <div class="bar-label">
-                      <span>Mental</span>
-                      <span class="bar-value">85%</span>
-                    </div>
-                    <div class="bar-track">
-                      <div class="bar-fill" style="width: 85%; background: linear-gradient(90deg, #7311d4, #a855f7);"></div>
-                    </div>
-                  </div>
-
-                  <div class="bar-item">
-                    <div class="bar-label">
-                      <span>Emocional</span>
-                      <span class="bar-value">40%</span>
-                    </div>
-                    <div class="bar-track">
-                      <div class="bar-fill" style="width: 40%; background: linear-gradient(90deg, #ec4899, #f472b6);"></div>
-                    </div>
-                  </div>
-
-                  <div class="bar-item">
-                    <div class="bar-label">
-                      <span>Espiritual</span>
-                      <span class="bar-value">75%</span>
-                    </div>
-                    <div class="bar-track">
-                      <div class="bar-fill" style="width: 75%; background: linear-gradient(90deg, #6366f1, #818cf8);"></div>
-                    </div>
-                  </div>
-
-                  <div class="bar-item">
-                    <div class="bar-label">
-                      <span>Físico</span>
-                      <span class="bar-value">60%</span>
-                    </div>
-                    <div class="bar-track">
-                      <div class="bar-fill" style="width: 60%; background: linear-gradient(90deg, #ec4899, #f472b6);"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       </div>
@@ -292,24 +167,112 @@
     <!-- Footer -->
     <footer class="page-footer">
       <div class="footer-container">
-        <p class="footer-text">© 2023 CosmosAI Numerología. Todos los derechos reservados.</p>
-        <div class="footer-links">
-          <a href="#">Términos</a>
-          <a href="#">Privacidad</a>
-          <a href="#">Soporte</a>
-        </div>
+        <p class="footer-text">© 2026 CosmosAI Numerología. Todos los derechos reservados.</p>
+        
+        
       </div>
     </footer>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
+import { useAuthStore } from '../stores/Auth'
+import { postData, getData } from '../services/apiCliente'
+import { useNotify } from '../composables/useNotify'
+
+const auth = useAuthStore()
+const { notifySuccess, notifyError, notifyWarning, notifyLoading } = useNotify()
 
 const form = ref({
-  name: 'Elena Ramirez',
-  birthdate: '1992-08-15'
+  name: '',
+  birthdate: ''
 })
+
+const lectura = ref(null)
+const cargando = ref(false)
+const error = ref('')
+
+// Al montar, intentar cargar la lectura principal ya existente
+onMounted(async () => {
+  if (auth.usuario) {
+    form.value.name = auth.usuario.nombre || ''
+    if (auth.usuario.fechanacimiento) {
+      form.value.birthdate = auth.usuario.fechanacimiento.split('T')[0]
+    }
+  }
+
+  if (!auth.usuario?._id) return
+  try {
+    const data = await getData(`/lecturas/${auth.usuario._id}`)
+    // Buscar si ya existe una lectura principal
+    const principal = data.lecturas?.find(l => l.tipo === 'principal')
+    if (principal) lectura.value = principal
+  } catch {
+    // No hay lecturas aún, no mostrar error
+  }
+})
+
+const generarLectura = async () => {
+  if (!auth.usuario?._id) {
+    error.value = 'Usuario no autenticado'
+    notifyError('Usuario no autenticado', 'error_outline')
+    return
+  }
+  if (lectura.value) {
+    error.value = 'Ya has generado tu lectura principal. Esta lectura es única de por vida.'
+    notifyWarning('Ya tienes tu lectura principal registrada. Esta es única de por vida.', 'info')
+    return
+  }
+  let dismiss = null
+  try {
+    cargando.value = true
+    error.value = ''
+    dismiss = notifyLoading('Consultando el universo... Tu lectura principal está siendo creada.')
+    // El backend recibe usuario_id y tipo; si estado=0, fuerza tipo="principal" internamente
+    const data = await postData('/lecturas', {
+      usuario_id: auth.usuario._id,
+      tipo: 'principal'
+    })
+    // El backend devuelve { msg, lectura }
+    lectura.value = data.lectura || data.lecturas?.[0] || data || null
+    dismiss?.()
+    notifySuccess('Tu lectura principal ha llegado. ✨ Este es un mensaje único para ti.', 'auto_fix_high')
+  } catch (err) {
+    dismiss?.()
+    error.value = err.response?.data?.msg || 'Error al generar la lectura'
+    notifyError(error.value, 'error_outline')
+  } finally {
+    cargando.value = false
+  }
+}
+
+// ══ Copiar / Descargar lectura principal ══
+const copiadoPrincipal = ref(false)
+
+const copiarPrincipal = async () => {
+  if (!lectura.value?.contenido) return
+  await navigator.clipboard.writeText(lectura.value.contenido)
+  copiadoPrincipal.value = true
+  setTimeout(() => { copiadoPrincipal.value = false }, 2000)
+}
+
+const descargarTxtPrincipal = () => {
+  if (!lectura.value?.contenido) return
+  const blob = new Blob([lectura.value.contenido], { type: 'text/plain' })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url; a.download = 'lectura-principal.txt'; a.click()
+  URL.revokeObjectURL(url)
+}
+
+const descargarPdfPrincipal = () => {
+  if (!lectura.value?.contenido) return
+  const win = window.open('', '_blank')
+  win.document.write(`<pre style="font-family:sans-serif;padding:32px;max-width:700px;margin:auto">${lectura.value.contenido}</pre>`)
+  win.document.close()
+  win.print()
+}
 </script>
 
 <style scoped lang="scss">

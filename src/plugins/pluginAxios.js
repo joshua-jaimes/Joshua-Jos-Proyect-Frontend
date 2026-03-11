@@ -2,7 +2,7 @@ import axios from 'axios';
 import { useAuthStore } from "../stores/Auth.js";
 
 const axiosInstance = axios.create({
-  baseURL: 'https://joshua-jos-proyect-backend.onrender.com/api',
+  baseURL: 'http://localhost:3000/api',
   headers: {
     'Content-Type': 'application/json'
   }

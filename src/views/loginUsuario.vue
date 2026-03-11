@@ -13,21 +13,25 @@
 
       <!-- LEFT HERO -->
       <section class="hero">
-        <span class="badge">Nueva versión 2.0</span>
+        <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuCkJsS36YgozZ1lzi1eWpVcDcr15CuClyFAQ2RMXHRZnz4XFuy7NuFijhBoHMxPIqflK2zQMCMe7niNY95d10Y5NbRyc_ZNNJeg7Fl7zbFKVM1C3V80Ao9MeFy5OCjUG3z2MEga8-iR_aX7pgLgTeYOXKe26XnYxZuUSnjSHc9QHHEibKdTM0oTOOcQ51JE2G4hxaOc4AkPqiBK1pggJDJ6iVBsz460cT3mm-jbodQ1Df23Aw4ikxZ5BX8HWOrodeWllc9_XXRGFbI" class="bg-img" />
+        <div class="overlay"></div>
+        <div class="hero-content">
+          <span class="badge" style="color: #b980ff;font-size: 30px; font-weight: bold;">Numerología AI</span>
 
-        <h1>
-          Descubre el poder de tus
-          <span>números</span>
-        </h1>
+          <h1>
+            Descubre el poder de tus
+            <span>números</span>
+          </h1>
 
-        <p>
-          Accede a lecturas personalizadas generadas por IA y gestiona
-          tu viaje espiritual con nuestra plataforma premium.
-        </p>
+          <p>
+            Accede a lecturas personalizadas generadas por IA y gestiona
+            tu viaje espiritual con nuestra plataforma premium.
+          </p>
 
-        <div class="features">
-          <div class="feature">🧠 Lecturas AI</div>
-          <div class="feature">👥 Comunidad</div>
+          <div class="features">
+            <div class="feature">🧠 Lecturas AI</div>
+            <div class="feature">👥 Comunidad</div>
+          </div>
         </div>
       </section>
 
@@ -40,7 +44,7 @@
         <h2>Bienvenido de nuevo</h2>
         <p class="subtitle">Ingresa a tu portal místico</p>
 
-        <form @submit.prevent="ingresar">
+        <form @submit.prevent="ingresar" novalidate>
 
           <label>Correo electrónico</label>
           <input v-model="usuario" type="email" placeholder="correo@ejemplo.com" required>
@@ -49,9 +53,10 @@
           <input v-model="pass" type="password" placeholder="••••••••" required>
 
           <!-- BOTÓN LOGIN -->
-          <button type="submit" class="login-btn">
-            Iniciar sesión
-            <span class="material-icons">arrow_forward</span>
+          <button type="submit" class="login-btn" :disabled="cargando">
+            <q-spinner v-if="cargando" size="sm" class="q-mr-sm" />
+            <span v-else>Iniciar sesión</span>
+            <span v-if="!cargando" class="material-icons">arrow_forward</span>
           </button>
 
           <!-- BOTÓN REGISTRAR -->
@@ -72,20 +77,44 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/Auth'
+import { useNotify } from '../composables/useNotify'
 
 const usuario = ref('')
 const pass = ref('')
 const auth = useAuthStore()
 const router = useRouter()
+const { notifySuccess, notifyError } = useNotify()
+const cargando = ref(false)
 
 async function ingresar() {
+  if (!usuario.value) {
+    notifyError('El email es obligatorio', 'error_outline')
+    return
+  }
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  if (!emailRegex.test(usuario.value)) {
+    notifyError('Formato de email inválido', 'error_outline')
+    return
+  }
+  if (!pass.value) {
+    notifyError('La contraseña es obligatoria', 'error_outline')
+    return
+  }
+
+  cargando.value = true
   const ok = await auth.login(usuario.value, pass.value)
+  cargando.value = false
 
   if (ok) {
-    alert('Login correcto')
-    router.push('/dashboard') // 👈 aquí lo mandas
+    notifySuccess(`Bienvenido, ${auth.usuario?.nombre || ''}. Tu sesión ha iniciado correctamente.`, 'auto_awesome')
+    // Redirigir según el rol del usuario autenticado
+    if (auth.usuario?.rol === 'admin') {
+      router.push('/adminpanel')
+    } else {
+      router.push('/dashboard')
+    }
   } else {
-    alert(auth.error || 'Error al iniciar sesión')
+    notifyError(auth.error || 'Correo o contraseña incorrectos.', 'error_outline')
   }
 }
 </script>
@@ -151,7 +180,7 @@ html, body, #app {
 
 /* Layout */
 .layout {
-  min-height: 100vh; /* ocupa toda la pantalla */
+  min-height: 100vh;
   display: grid;
   grid-template-columns: 1fr 420px;
   align-items: center;
@@ -163,6 +192,41 @@ html, body, #app {
 }
 
 /* HERO */
+.hero {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 40px;
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 10;
+}
+
+.bg-img {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.6;
+  mix-blend-mode: overlay;
+  pointer-events: none;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, #0f0914, rgba(115,17,212, 0.2), transparent);
+  z-index: 1;
+  pointer-events: none;
+}
+
 .hero h1 {
   font-size: 3rem;
   line-height: 1.1;

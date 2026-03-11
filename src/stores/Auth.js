@@ -25,16 +25,24 @@ export const useAuthStore = defineStore("auth", () => {
             return true  // 👈 IMPORTANTE
         } catch (err) {
             console.error("Error en login:", err)
-            error.value = err.response?.data?.error || err.response?.data?.message || "Error al iniciar sesión"
+            error.value = err.response?.data?.error || err.response?.data?.message || err.response?.data?.msg || "Error al iniciar sesión"
             return false // 👈 IMPORTANTE
         }
     }
 
-   return {
-    token,
-    usuario,   // 👈 AGREGA ESTO
-    error,
-    login
-}
+    // ══ Cerrar sesión ════════════════════════════════════════
+    function logout() {
+        token.value = ''
+        usuario.value = null
+        error.value = ''
+    }
+
+    return {
+        token,
+        usuario,
+        error,
+        login,
+        logout
+    }
 
 }, { persist: true })

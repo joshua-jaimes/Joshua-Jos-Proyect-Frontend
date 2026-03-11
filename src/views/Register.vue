@@ -15,12 +15,7 @@ Copiar
           </div>
           <h1>Descubre el código secreto de tu vida</h1>
           <p>Únete a la plataforma de numerología más avanzada. Lecturas generadas por IA, cartas natales precisas y una comunidad consciente te esperan.</p>
-          <div class="testimonial">
-            <div class="avatars">
-              <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuD1M61kIf5lRsKzV8pqX2jxZsll2t0icWslo6Nzw2gSBZnkrUCnmTS9YGnL74nFikp04578wz223TEdTGIiI2NqZ6_RcDpR8seX8B5vDonGR2nF1ZeLBfOEMuKjhlsgleRURbdwyQs3v1oBVrNP51buZbdsXzZqByEugLXUP6yT3TZz_MxVQHs3qjyb9Z8aIpm4SGf2uG1OVT3mfNA5rwDh0Kke6kvJaBTLrGNBaVehwYEiuTM3NGgstp6-Pl4y7XBvDxzyioUOuZw" />
-              <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuCDESfm8icaW9wT-nAlrwx_3JF5APeCxP0OvaIGXrtPsjVO3xpTfKFtPh5UvfOMDg7rvsrPvAyx2mfT4oEjlDlCviWHnKVYd2LcoIigfHEmLXEZaa5WllpMc7_KQzqEoACoXc39jHw9OpvgUTbr1KUPKAS5iLwutYW_AjQZGGPRtpcmVq9pY6IMwL3VFkeBUxAM_gzW3otC4BjLE04mSZmQp6BowVcOaeHSgIiacZc2JImQiuWkg7Fve5Pe_ZDDg_xWhcbl6JI6sd-k" />
-              <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuChi-kYa_wHnbfwjN5ZaPKeehD21HxhX0XH0alzsbL0oCa1AJS6Qz0XYlOxsPB3TaRFCmp58zwU1m1vTHx5oPKtJpoWWjO1t73hfsrovyXjgOpeATizbAbYaHgC5JATCOXHnp9Dfzs5xyvXkeTvxNIrwc_wdHOTGFGisHzJpcq2nKKvGuyK7bg11UDv3ZlkCMxsMyzJoGMEh1VSV1x54QiqG8Y7R4Me5lDNai_ccdAnAwZ04ZhCx_PoaSuGOflksB3u-Y5PDypKqU" />
-            </div>
+          <div class="testimonial" style="margin-top: auto; align-self: flex-start; display: inline-block;">
             <div class="rating">
               <div class="stars">
                 <q-icon name="star" color="gold" size="14px" />
@@ -39,7 +34,7 @@ Copiar
         <div class="form-section">
           <h2>Crear Cuenta</h2>
           <p>Ingresa tus datos para calcular tu numerología inicial.</p>
-          <form @submit.prevent="submit" class="form">
+          <form @submit.prevent="submit" class="form" novalidate>
             <div class="field">
               <label>Nombre Completo</label>
               <div class="input-wrapper">
@@ -77,13 +72,20 @@ Copiar
                 <q-icon :name="showPwd ? 'visibility' : 'visibility_off'" class="toggle-pwd" @click="showPwd=!showPwd" />
               </div>
             </div>
-            <button type="submit" class="btn-submit" @click="submit"><span>Calcular mi Numerología</span><q-icon name="arrow_forward" size="18px" /></button>
+            <div class="field">
+              <label>Confirmar Contraseña</label>
+              <div class="input-wrapper">
+                <q-icon name="lock_outline" />
+                <input v-model="data.confirmPassword" :type="showPwd ? 'text' : 'password'" placeholder="••••••••" />
+              </div>
+            </div>
+            <button type="submit" class="btn-submit" :disabled="cargando">
+              <q-spinner v-if="cargando" size="sm" class="q-mr-sm" />
+              <span v-else>Calcular mi Numerología</span>
+              <q-icon v-if="!cargando" name="arrow_forward" size="18px" />
+            </button>
           </form>
-          <div class="divider">O regístrate con</div>
-          <div class="social">
-            <button class="social-btn"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.545,10.239v3.821h5.445c-0.712,2.315-2.647,3.972-5.445,3.972c-3.332,0-6.033-2.701-6.033-6.032s2.701-6.032,6.033-6.032c1.498,0,2.866,0.549,3.921,1.453l2.814-2.814C17.503,2.988,15.139,2,12.545,2C7.021,2,2.543,6.477,2.543,12s4.478,10,10.002,10c8.396,0,10.249-7.85,9.426-11.748L12.545,10.239z" /></svg>Google</button>
-            <button class="social-btn"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.24.75-.62 1.49-1.12 2.08-.8.95-1.51 1.63-2.41 1.99zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z" /></svg>Apple</button>
-          </div>
+
           <div class="bottom-link lt-md">¿Ya tienes cuenta? <a href="#">Inicia sesión</a></div>
         </div>
       </div>
@@ -94,30 +96,71 @@ Copiar
 <script setup>
 import { ref } from 'vue'
 import axiosInstance from '../plugins/pluginAxios.js'
+import { useNotify } from '../composables/useNotify'
 
 const data = ref({ 
   name: '', 
   email: '', 
   dob: '', 
   age: '',   // 👈 nuevo campo
-  password: '' 
+  password: '',
+  confirmPassword: ''
 })
 
 const showPwd = ref(false)
+const cargando = ref(false)
+const { notifySuccess, notifyError } = useNotify()
 
 const submit = async () => {
+  if (!data.value.name?.trim()) {
+    notifyError('El nombre es obligatorio', 'error_outline')
+    return
+  }
+  if (!data.value.email?.trim()) {
+    notifyError('El email es obligatorio', 'error_outline')
+    return
+  }
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  if (!emailRegex.test(data.value.email)) {
+    notifyError('Formato de email inválido', 'error_outline')
+    return
+  }
+  if (!data.value.password) {
+    notifyError('La contraseña es obligatoria', 'error_outline')
+    return
+  }
+  if (data.value.password.length < 8) {
+    notifyError('La contraseña debe tener mínimo 8 caracteres', 'error_outline')
+    return
+  }
+  if (!/\d/.test(data.value.password)) {
+    notifyError('La contraseña debe incluir al menos un número', 'error_outline')
+    return
+  }
+  if (data.value.password !== data.value.confirmPassword) {
+    notifyError('Las contraseñas no coinciden', 'error_outline')
+    return
+  }
+
+  // Prepara payload sin confirmPassword
+  const payload = { ...data.value }
+  delete payload.confirmPassword
+
+  cargando.value = true
   try {
     const response = await axiosInstance.post(
       "/usuario/register",
-      data.value
+      payload
     )
 
-    alert("Usuario registrado correctamente")
+    notifySuccess('Usuario registrado correctamente. Bienvenido al universo.', 'person_add')
     console.log(response.data)
 
   } catch (error) {
     console.error(error)
-    alert(error.response?.data?.error || error.response?.data?.message || "Error al registrar usuario")
+    notifyError(error.response?.data?.error || error.response?.data?.message || error.response?.data?.msg || 'Error al registrar usuario', 'error_outline')
+  } finally {
+    cargando.value = false
   }
 }
 </script>
