@@ -1,251 +1,70 @@
 <template>
-  <q-layout view="hHh lpR fFf">
+  <q-page class="flex flex-center" style="background: radial-gradient(circle at top, #2b1154 0%, #0a0410 70%); min-height: 100vh; position: relative; overflow: hidden;">
+    <!-- Botón Volver -->
+    <div style="position: absolute; top: 20px; left: 20px; z-index: 10;">
+      <q-btn flat dense color="warning" icon="arrow_back" label="Volver atrás" @click="router.back()" />
+    </div>
 
-    <!-- ══════════ NAVBAR ══════════ -->
-    <q-header class="nav-bar">
-      <div class="nav-inner">
-        <div class="nav-logo">
-          <span class="mi nav-logo-icon">auto_awesome</span>
-          <span class="nav-logo-text">Numera<span>AI</span></span>
+    <!-- Partículas / Luces de fondo -->
+    <div class="bg-glow-tr" style="background: rgba(138,43,226,0.15); filter: blur(80px); width: 400px; height: 400px; border-radius: 50%; position: absolute; top: -10%; right: -10%;"></div>
+    <div class="bg-glow-bl" style="background: rgba(242,185,13,0.1); filter: blur(90px); width: 350px; height: 350px; border-radius: 50%; position: absolute; bottom: -5%; left: -5%;"></div>
+    <div class="pattern" style="opacity: 0.2; background-image: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px); background-size: 20px 20px; position: absolute; top: 0; left: 0; right: 0; bottom: 0;"></div>
+
+    <!-- Contenedor Único -->
+    <div style="position: relative; z-index: 2; padding: 24px; width: 100%; max-width: 480px;">
+      <q-card
+        class="text-center q-pa-xl"
+        dark
+        style="background: rgba(20, 10, 30, 0.7); border: 1px solid rgba(138, 43, 226, 0.3); border-radius: 24px; box-shadow: 0 16px 48px rgba(138, 43, 226, 0.25); backdrop-filter: blur(16px);"
+      >
+        <div style="margin-bottom: 24px;">
+          <q-icon name="auto_awesome" color="warning" size="4.5rem" style="filter: drop-shadow(0 0 12px rgba(242,185,13,0.6));" />
         </div>
-        <nav class="nav-links gt-sm">
-          
-          <a href="#" class="nav-link active">Membresía</a>
-        </nav>
-        <div class="nav-avatar">JD</div>
-      </div>
-    </q-header>
+        
+        <h1 class="text-h4 text-weight-bolder text-white q-mt-none q-mb-md" style="letter-spacing: -0.5px; font-family: 'Manrope', sans-serif;">
+          Activa tu energía premium ✨
+        </h1>
+        
+        <p class="text-subtitle1 text-grey-4 q-mb-xl" style="line-height: 1.6; font-size: 1.1rem;">
+          Desbloquea tu potencial con NumerAI. 🔮 Accede a revelaciones cuánticas y predicciones personalizadas para elevar tu frecuencia vital.
+        </p>
 
-    <!-- ══════════ PAGE ══════════ -->
-    <q-page-container>
-      <q-page class="main-page">
-
-        <div class="bg-glow-tr" />
-        <div class="bg-glow-bl" />
-
-        <div class="page-content">
-
-          <!-- ── Page heading ── -->
-          <div class="page-heading">
-            <h1 class="page-title">Elige tu destino numerológico</h1>
-            <p class="page-sub">
-              Desbloquea el poder de las lecturas generadas por IA y descubre lo que los números
-              tienen preparado para ti. Planes flexibles, cancelación en cualquier momento.
-            </p>
-
-            <!-- Billing toggle -->
-            <div class="billing-toggle">
-              <span class="toggle-label" :class="{active: !annualBilling}">Mensual</span>
-              <div class="toggle-wrap" @click="annualBilling = !annualBilling">
-                <div class="toggle-track" :class="{on: annualBilling}">
-                  <div class="toggle-thumb" />
-                </div>
-              </div>
-              <span class="toggle-label" :class="{active: annualBilling}" style="display:flex;align-items:center;gap:8px">
-                Anual
-                <span class="annual-badge">-20% Dto</span>
-              </span>
-            </div>
-          </div>
-
-          <!-- ── Main grid ── -->
-          <div class="content-grid">
-
-            <!-- Left: Plans -->
-            <div class="plans-col">
-
-              <!-- Premium plan -->
-              <div class="premium-card-wrap">
-                <div class="premium-glow" />
-                <div class="premium-card">
-                  <div class="recommended-badge">Recomendado</div>
-                  <div class="plan-top">
-                    <div>
-                      <div class="plan-name">
-                        Plan Premium
-                        <span class="mi plan-verified">verified</span>
-                      </div>
-                      <p class="plan-desc">Acceso total a nuestra IA y reportes profundos.</p>
-                    </div>
-                    <div class="plan-price">
-                      <div class="plan-price-main">$49<span>/mes</span></div>
-                      <div class="plan-price-sub">Facturado $588 anualmente</div>
-                    </div>
-                  </div>
-                  <div class="features-grid">
-                    <div v-for="f in premiumFeatures" :key="f" class="feature-item">
-                      <div class="feature-check"><span class="mi check-icon">check</span></div>
-                      {{ f }}
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Monthly plan -->
-              <div class="monthly-card">
-                <div class="plan-top">
-                  <div>
-                    <div class="plan-name monthly">Plan Mensual</div>
-                    <p class="plan-desc">Ideal para empezar tu viaje numerológico.</p>
-                  </div>
-                  <div class="plan-price">
-                    <div class="plan-price-main monthly-price">$29<span class="monthly-denom">/mes</span></div>
-                  </div>
-                </div>
-                <div class="monthly-features">
-                  <div class="monthly-feature"><span class="mi monthly-check">check</span>Lecturas básicas</div>
-                  <div class="monthly-feature"><span class="mi monthly-check">check</span>Actualizaciones semanales</div>
-                </div>
-              </div>
-
-              <!-- Testimonial -->
-              <div class="testimonial">
-                <span class="testimonial-quote">"</span>
-                <div>
-                  <p class="testimonial-text">
-                    La precisión de NumeraAI es escalofriante. El plan Premium me ayudó a entender
-                    mis ciclos anuales y tomar mejores decisiones en mi negocio. ¡Totalmente recomendado!
-                  </p>
-                  <div class="testimonial-author">
-                    <div class="testimonial-avatar">
-                      <img :src="testimonialAvatar" alt=""/>
-                    </div>
-                    <span class="testimonial-name">Maria G.</span>
-                    <div class="testimonial-stars">
-                      <span v-for="i in 5" :key="i" class="mi star-icon">star</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-            </div><!-- /plans-col -->
-
-            <!-- Right: Payment form -->
-            <div>
-              <div class="payment-card">
-
-                <div class="payment-header">
-                  <p class="payment-header-title">Detalles de Pago</p>
-                  <div class="pay-tabs">
-                    <button
-                      class="pay-tab"
-                      :class="activePayTab==='card' ? 'active' : 'inactive'"
-                      @click="activePayTab='card'"
-                      type="button"
-                    >
-                      <span class="mi pay-tab-icon">credit_card</span> Tarjeta
-                    </button>
-                    <button
-                      class="pay-tab"
-                      :class="activePayTab==='transfer' ? 'active' : 'inactive'"
-                      @click="activePayTab='transfer'"
-                      type="button"
-                    >
-                      <span class="mi pay-tab-icon">account_balance</span> Transferencia
-                    </button>
-                  </div>
-                </div>
-
-                <div class="payment-body">
-
-                  <!-- Card form -->
-                  <template v-if="activePayTab==='card'">
-                    <div class="form-fields">
-
-                      <div>
-                        <label class="field-label">Titular de la tarjeta</label>
-                        <div class="input-wrap">
-                          <span class="mi input-icon">person</span>
-                          <input v-model="cardHolder" class="pay-input" type="text" placeholder="Como aparece en la tarjeta"/>
-                        </div>
-                      </div>
-
-                      <div>
-                        <label class="field-label">Número de tarjeta</label>
-                        <div class="input-wrap">
-                          <span class="mi input-icon">payment</span>
-                          <input v-model="cardNumber" class="pay-input" type="text" placeholder="0000 0000 0000 0000" style="padding-right:72px"/>
-                          <div class="card-logos">
-                            <img class="card-logo" :src="visaLogo" alt="visa"/>
-                            <img class="card-logo mc" :src="mcLogo" alt="mc"/>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div class="input-row">
-                        <div>
-                          <label class="field-label">Expiración</label>
-                          <div class="input-wrap">
-                            <span class="mi input-icon">calendar_today</span>
-                            <input v-model="cardExp" class="pay-input" type="text" placeholder="MM/AA"/>
-                          </div>
-                        </div>
-                        <div>
-                          <label class="field-label">CVC</label>
-                          <div class="input-wrap">
-                            <span class="mi input-icon">lock</span>
-                            <input v-model="cardCvc" class="pay-input" type="text" placeholder="123"/>
-                          </div>
-                        </div>
-                      </div>
-
-                    </div>
-                  </template>
-
-                  <!-- Transfer placeholder -->
-                  <template v-else>
-                    <div class="transfer-placeholder">
-                      <span class="mi transfer-icon">account_balance</span>
-                      Datos de transferencia bancaria disponibles al confirmar el plan.
-                    </div>
-                  </template>
-
-                  <!-- Summary -->
-                  <div class="summary">
-                    <div class="summary-row"><span>Subtotal (Anual)</span><span>$588.00</span></div>
-                    <div class="summary-row green"><span>Descuento (20%)</span><span>-$117.60</span></div>
-                    <div class="summary-row"><span>Impuestos</span><span>$0.00</span></div>
-                    <div class="summary-row total"><span>Total a pagar</span><span>$470.40</span></div>
-                  </div>
-
-                  <button class="pay-btn" type="button">
-                    <span class="mi pay-lock-icon">lock_outline</span>
-                    Pagar Ahora $470.40
-                  </button>
-
-                  <div class="ssl-note">
-                    <span class="mi ssl-icon">security</span>
-                    Pagos encriptados con SSL de 256 bits
-                  </div>
-
-                </div>
-              </div>
-            </div>
-
-          </div><!-- /content-grid -->
-
-          <!-- Trust footer -->
-          <div class="trust-footer">
-            <div class="trust-logos">
-              <img class="trust-logo" :src="stripeLogo" alt="stripe"/>
-              <img class="trust-logo" :src="paypalLogo" alt="paypal"/>
-            </div>
-            <div class="trust-links">
-              <a href="#" class="trust-link">Términos de servicio</a>
-              <a href="#" class="trust-link">Política de privacidad</a>
-              <a href="#" class="trust-link">Ayuda</a>
-            </div>
-          </div>
-
+        <!-- Botón Mercado Pago con estilos interactivos mejorados -->
+        <q-btn
+          unelevated
+          size="xl"
+          class="text-weight-bold full-width btn-mercado-pago"
+          :loading="loadingMP"
+          @click="pagarConMercadoPago"
+        >
+          <template v-slot:loading>
+            <q-spinner color="white" size="1.2em" />
+            <span class="q-ml-sm" style="font-size:16px;">Redirigiendo...</span>
+          </template>
+          <span v-if="!loadingMP" style="display:flex; align-items:center; justify-content:center; gap:12px; font-size: 18px;">
+            💳 Pagar con Mercado Pago
+          </span>
+        </q-btn>
+        
+        <!-- Sello de confianza sutil -->
+        <div class="q-mt-lg text-caption text-grey-5" style="display:flex; align-items:center; justify-content:center; gap:6px; letter-spacing: 0.5px;">
+          <q-icon name="security" size="xs" color="positive" /> 
+          Transacción segura de alta frecuencia
         </div>
-      </q-page>
-    </q-page-container>
 
-  </q-layout>
+      </q-card>
+    </div>
+  </q-page>
 </template>
 
 <script setup>
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { useAuthStore } from '../stores/Auth.js'
+import { postData } from '../services/apiCliente.js'
+
+const router = useRouter()
+const auth = useAuthStore()
 
 const annualBilling = ref(true)
 const activePayTab  = ref('card')
@@ -253,6 +72,33 @@ const cardHolder    = ref('')
 const cardNumber    = ref('')
 const cardExp       = ref('')
 const cardCvc       = ref('')
+const loadingMP     = ref(false)
+
+// ══ Precio según plan seleccionado ══
+const precioActual = () => annualBilling.value ? 470400 : 29000  // COP
+const tituloActual = () => annualBilling.value ? 'Plan Premium Anual - NumeraAI' : 'Plan Mensual - NumeraAI'
+
+// ══ Pagar con Mercado Pago ══
+const pagarConMercadoPago = async () => {
+  try {
+    loadingMP.value = true
+    const data = await postData('/mercadopago/create-preference', {
+      titulo: tituloActual(),
+      precio: precioActual(),
+      cantidad: 1,
+      usuario_id: auth.usuario?._id || null,
+    })
+    // Redirigir al Checkout Pro (usar sandbox_init_point para pruebas)
+    const url = data.sandbox_init_point || data.init_point
+    if (url) {
+      window.location.href = url
+    }
+  } catch (error) {
+    console.error('Error al iniciar pago:', error)
+  } finally {
+    loadingMP.value = false
+  }
+}
 
 const premiumFeatures = [
   'Lecturas de IA ilimitadas',
@@ -284,27 +130,6 @@ const paypalLogo        = 'https://lh3.googleusercontent.com/aida-public/AB6AXuC
   display: inline-block; white-space: nowrap; -webkit-font-smoothing: antialiased;
 }
 
-/* ── Layout ── */
-:deep(.nav-bar) {
-  background: rgba(34,30,16,0.8) !important;
-  backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(242,185,13,0.1) !important;
-  box-shadow: none !important;
-  height: 64px;
-}
-.nav-inner {
-  max-width: 1280px; margin: 0 auto; padding: 0 32px;
-  height: 64px; display: flex; align-items: center; justify-content: space-between;
-}
-.nav-logo { display: flex; align-items: center; gap: 12px; }
-.nav-logo-icon { font-size: 28px !important; color: #f2b90d; }
-.nav-logo-text { font-size: 20px; font-weight: 700; letter-spacing: -0.02em; color: #fff; }
-.nav-logo-text span { color: #f2b90d; }
-.nav-links { display: flex; align-items: center; gap: 8px; }
-.nav-link { color: #9ca3af; text-decoration: none; padding: 8px 12px; border-radius: 6px; font-size: 14px; font-weight: 500; transition: color .2s; }
-.nav-link:hover { color: #f2b90d; }
-.nav-link.active { color: #f2b90d; font-weight: 700; }
-.nav-avatar { width: 32px; height: 32px; border-radius: 50%; background: rgba(242,185,13,0.2); border: 1px solid rgba(242,185,13,0.3); display: flex; align-items: center; justify-content: center; color: #f2b90d; font-size: 13px; font-weight: 700; }
 
 /* ── Page ── */
 :deep(.main-page) { background: #221e10 !important; min-height: calc(100vh - 64px); position: relative; overflow: hidden; }
@@ -426,4 +251,28 @@ const paypalLogo        = 'https://lh3.googleusercontent.com/aida-public/AB6AXuC
 .trust-links { display: flex; gap: 32px; flex-wrap: wrap; }
 .trust-link { font-size: 14px; color: #9ca3af; text-decoration: none; transition: color .2s; }
 .trust-link:hover { color: #f2b90d; }
+
+
+/* ── Botón Interactivo de Mercado Pago ── */
+.btn-mercado-pago {
+  background: #009ee3 !important;
+  color: white !important;
+  border-radius: 14px;
+  height: 60px;
+  box-shadow: 0 4px 12px rgba(0, 158, 227, 0.3);
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  cursor: pointer;
+}
+
+.btn-mercado-pago:hover {
+  background: #008cc9 !important;
+  transform: scale(1.02) translateY(-2px);
+  box-shadow: 0 12px 28px rgba(0, 158, 227, 0.5);
+  filter: brightness(1.05);
+}
+
+.btn-mercado-pago:active {
+  transform: scale(0.97) translateY(2px);
+  box-shadow: 0 2px 8px rgba(0, 158, 227, 0.2);
+}
 </style>

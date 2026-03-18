@@ -1,57 +1,6 @@
 <template>
-  <div class="dashboard-page">
-    <!-- Sidebar -->
-    <aside class="sidebar hide-lt-md">
-      <div class="logo-box">
-        <div class="logo-icon">
-          <q-icon name="auto_awesome" size="lg" />
-        </div>
-        <h3 class="logo-text">Num<span class="primary">AI</span></h3>
-      </div>
-
-      <nav class="nav-menu">
-        <a href="#" class="nav-item active">
-          <q-icon name="dashboard" />
-          <span>Inicio</span>
-        </a>
-       
-<router-link :to="{ name: 'MisLecturas' }" class="nav-item">
-  <q-icon name="library_books" />
-  <span>Mis Lecturas</span>
-</router-link>
-        
-        
-
-        <div class="nav-divider">
-          <p class="divider-text">Cuenta</p>
-          <router-link :to="{ name: 'MembresiasYPagos' }" class="nav-item">
-            <q-icon name="card_membership" />
-            <span>Membresía</span>
-          </router-link>
-          <router-link :to="{ name: 'PerfilUsuario' }" class="nav-item">
-            <q-icon name="person" />
-            <span>Perfil</span>
-          </router-link>
-
-
-         
-        </div>
-      </nav>
-
-      <div class="user-profile">
-        <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuAJx4eLv1skOsEEfsPV0qDIYSErReSPjx-hO9UyaGI9jOlijk8lQ7xcNRvRTzxD4n1PEHnQGuobGqbZ0bjGqEkOApGiS5mDyTxFAyj0NbjakEH7ptwCFziWRrC2Gfen3stPaj-pAH5ZbQWIXLkTn2rRj2CHgvOZZlmSduCrQV3XnkFZlrPJxpo_4oOZmbPvoTZoiqVP_Ofz2VePL2LBRJG9vNQYeW2KQTshVsic5Ag5syLaaE32FqcPni4osBYCQir8SSwH7H2wvp8" alt="user" class="user-avatar" />
-        <div class="user-info">
-          <p class="user-name">{{ nombreUsuario }}</p>
-          <p class="user-plan">{{ rolLabel }}</p>
-        </div>
-        <button class="logout-btn" @click="handleLogout">
-          <q-icon name="logout" />
-        </button>
-      </div>
-    </aside>
-
-    <!-- Main Content -->
-    <main class="main-content">
+  <q-page class="q-pa-md main-content bg-dashboard">
+    <div style="position:relative; width:100%; height:100%;">
       <!-- Background Glow -->
       <div class="bg-glow"></div>
 
@@ -213,8 +162,8 @@
           <p>© 2026 Numerología AI. Todos los derechos reservados.</p>
         </footer>
       </div>
-    </main>
-  </div>
+    </div>
+  </q-page>
 </template>
 
 <script setup>
@@ -450,190 +399,10 @@ $gray-100: #f3f4f6;
 
 * { box-sizing: border-box; }
 
-.dashboard-page {
-  display: flex;
-  height: 100vh;
+.bg-dashboard {
   background: $bg;
   color: $gray-300;
-}
-
-// SIDEBAR
-.sidebar {
-  width: 16rem;
-  background: #fff;
-  border-right: 1px solid #e5e7eb;
-  display: flex;
-  flex-direction: column;
-  z-index: 20;
-  
-  @media (prefers-color-scheme: dark) {
-    background: $surface-darker;
-    border-right-color: #1f2937;
-  }
-
-  .logo-box {
-    padding: 1.5rem;
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-
-    .logo-icon {
-      width: 2rem;
-      height: 2rem;
-      border-radius: 0.5rem;
-      background: $primary;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-    }
-
-    .logo-text {
-      font-size: 1.25rem;
-      font-weight: 700;
-      letter-spacing: -0.025em;
-      color: #111;
-
-      @media (prefers-color-scheme: dark) {
-        color: white;
-      }
-
-      .primary {
-        color: $primary;
-      }
-    }
-  }
-
-  .nav-menu {
-    flex: 1;
-    padding: 1rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-
-  .nav-item {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    padding: 0.75rem 1rem;
-    border-radius: 0.75rem;
-    color: #6b7280;
-    text-decoration: none;
-    font-weight: 500;
-    transition: all 0.2s;
-    cursor: pointer;
-
-    @media (prefers-color-scheme: dark) {
-      color: #9ca3af;
-    }
-
-    &:hover {
-      background: #f3f4f6;
-      color: #111;
-
-      @media (prefers-color-scheme: dark) {
-        background: rgba(255, 255, 255, 0.05);
-        color: white;
-      }
-    }
-
-    &.active {
-      background: rgba($primary, 0.1);
-      color: $primary;
-
-      @media (prefers-color-scheme: dark) {
-        background: rgba($primary, 0.1);
-        color: $primary-light;
-      }
-    }
-  }
-
-  .nav-divider {
-    padding-top: 1rem;
-    margin-top: 1rem;
-    border-top: 1px solid #e5e7eb;
-
-    @media (prefers-color-scheme: dark) {
-      border-top-color: #1f2937;
-    }
-
-    .divider-text {
-      font-size: 0.75rem;
-      font-weight: 600;
-      color: #9ca3af;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      padding: 0 1rem;
-      margin-bottom: 0.5rem;
-    }
-  }
-
-  .user-profile {
-    padding: 1rem;
-    border-top: 1px solid #e5e7eb;
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-
-    @media (prefers-color-scheme: dark) {
-      border-top-color: #1f2937;
-    }
-
-    .user-avatar {
-      width: 2.5rem;
-      height: 2.5rem;
-      border-radius: 9999px;
-      border: 2px solid rgba($primary, 0.3);
-      object-fit: cover;
-    }
-
-    .user-info {
-      flex: 1;
-      min-width: 0;
-
-      .user-name {
-        font-size: 0.875rem;
-        font-weight: 500;
-        color: #111;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-
-        @media (prefers-color-scheme: dark) {
-          color: white;
-        }
-      }
-
-      .user-plan {
-        font-size: 0.75rem;
-        color: #6b7280;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-
-        @media (prefers-color-scheme: dark) {
-          color: #9ca3af;
-        }
-      }
-    }
-
-    .logout-btn {
-      background: none;
-      border: none;
-      color: #9ca3af;
-      cursor: pointer;
-      transition: color 0.2s;
-
-      &:hover {
-        color: #111;
-
-        @media (prefers-color-scheme: dark) {
-          color: white;
-        }
-      }
-    }
-  }
+  min-height: 100vh;
 }
 
 // MAIN CONTENT
@@ -641,8 +410,6 @@ $gray-100: #f3f4f6;
   flex: 1;
   display: flex;
   flex-direction: column;
-  height: 100vh;
-  overflow: hidden;
   position: relative;
 
   .bg-glow {
@@ -762,7 +529,6 @@ $gray-100: #f3f4f6;
 // CONTENT SCROLL
 .content-scroll {
   flex: 1;
-  overflow-y: auto;
   padding: 1rem 2rem;
   z-index: 10;
   

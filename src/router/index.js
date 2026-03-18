@@ -5,11 +5,14 @@ import Register from '../views/Register.vue'
 import Dashboard from '../views/Dashboard.vue'
 import LecturaDiaria from '../views/LecturaDiaria.vue'
 import Adminpanel from '../views/Adminpanel.vue'
+import AdminUsuarios from '../views/AdminUsuarios.vue'
 import GeneradorNumeroPrincipal from '../views/GeneradorNumeroPrincipal.vue'
 import PerfilUsuario from '../views/PerfilUsuario.vue'
 import MembresiasYPagos from '../views/Membresías_y_Pagos.vue'
 import MisLecturas from '../views/MisLecturas.vue'
 /* import LoginAdministrador from '../views/loginAdministrador.vue' */
+
+import MainLayout from '../layouts/MainLayout.vue'
 
 const routes = [
   {
@@ -22,41 +25,51 @@ const routes = [
     name: 'register',
     component: Register
   },
-
-  {
-    path: '/dashboard',
-    name: 'dashboard',
-    component: Dashboard
-  },
-  {
-    path: '/LecturaDiaria',
-    name: 'LecturaDiaria',
-    component: LecturaDiaria
-  },
   {
     path: '/adminpanel',
     name: 'adminpanel',
     component: Adminpanel
   },
   {
-    path: '/generador-principal',
-    name: 'GeneradorNumeroPrincipal',
-    component: GeneradorNumeroPrincipal
+    path: '/admin-usuarios',
+    name: 'AdminUsuarios',
+    component: AdminUsuarios
   },
   {
-    path: '/perfil',
-    name: 'PerfilUsuario',
-    component: PerfilUsuario
-  },
-  {
-    path: '/membresias',
-    name: 'MembresiasYPagos',
-    component: MembresiasYPagos
-  },
-  {
-    path: '/mis-lecturas',
-    name: 'MisLecturas',
-    component: MisLecturas
+    path: '/',
+    component: MainLayout,
+    children: [
+      {
+        path: 'dashboard',
+        name: 'dashboard',
+        component: Dashboard
+      },
+      {
+        path: 'LecturaDiaria',
+        name: 'LecturaDiaria',
+        component: LecturaDiaria
+      },
+      {
+        path: 'generador-principal',
+        name: 'GeneradorNumeroPrincipal',
+        component: GeneradorNumeroPrincipal
+      },
+      {
+        path: 'perfil',
+        name: 'PerfilUsuario',
+        component: PerfilUsuario
+      },
+      {
+        path: 'membresias',
+        name: 'MembresiasYPagos',
+        component: MembresiasYPagos
+      },
+      {
+        path: 'mis-lecturas',
+        name: 'MisLecturas',
+        component: MisLecturas
+      }
+    ]
   }
 
 

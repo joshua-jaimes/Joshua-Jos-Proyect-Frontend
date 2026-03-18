@@ -1,30 +1,11 @@
 <template>
-  <div class="lectura-page">
-    <!-- Navbar -->
-    <nav class="navbar">
-      <div class="navbar-container">
-        <div class="navbar-logo">
-          <div class="logo-icon">
-            <q-icon name="all_inclusive" size="lg" class="text-primary" />
-          </div>
-          <span class="logo-text">Numera<span class="text-primary">.ai</span></span>
-        </div>
-
-        <div class="navbar-menu hide-lt-md">
-          <a href="#" class="nav-link active">Lectura Diaria</a>
-          
-          <div class="nav-divider"></div>
-          <button class="profile-btn">
-            <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuCo7jua4TuBui7I5MhSvL2pRq7n7FfPefECxkmHh9JB6lr5scn0_QCZ5IMbNDgandiIoyYu0dwqn93MMd7TLigu9TRtmz6NLGnRJUyogZJGchCGGTtARQO8cUwpXcU1gVAN3yf1TWtO5e-yeS32DaSDNuVcUoEaM-FLiRM7kutPwZNhDCkQXzkzL0GSvdYVhhvFVDQLrM0NMQHNfuRbt_M1k_-iUwx8-OoWUAvt8nnQoWuBHU5JoKnhQE3M9hTSVTd3t2hIxzQ7sm4" alt="profile" class="profile-avatar" />
-            <span>Mi Perfil</span>
-          </button>
-        </div>
-
-        <button class="menu-btn hide-gt-sm">
-          <q-icon name="menu" size="lg" />
-        </button>
-      </div>
-    </nav>
+  <q-page class="lectura-page">
+    <div style="z-index: 100; position: relative; padding: 16px 24px;">
+      <button @click="$router.back()" style="background: none; border: none; color: #f4d525; cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 16px; font-weight: 600;">
+        <q-icon name="arrow_back" size="sm" />
+        Volver atrás
+      </button>
+    </div>
 
     <!-- Main Content -->
     <main class="main-content">
@@ -155,31 +136,7 @@
           <div class="bottom-grid">
 
             <!-- Predicción Semanal (izquierda) -->
-            <div class="pred-section">
-              <div class="pred-header">
-                <div>
-                  <h3 class="pred-title">✨ Predicción Semanal</h3>
-                  <p class="pred-sub">Descubre los próximos 7 días</p>
-                </div>
-                <button class="pred-btn" @click="generarPrediccionSemanal" :disabled="cargandoSemanal">
-                  <q-spinner v-if="cargandoSemanal" size="sm" class="q-mr-sm" />
-                  <q-icon v-else name="auto_fix_high" size="sm" />
-                  {{ cargandoSemanal ? 'Consultando...' : (prediccionSemanal ? 'Actualizar' : 'Generar') }}
-                </button>
-              </div>
-              <div v-if="cargandoSemanal" class="ul-loading" style="margin-top:1rem">
-                <span class="ul-loading-dot"></span><span class="ul-loading-dot"></span><span class="ul-loading-dot"></span>
-                <span class="ul-loading-text">Consultando el universo para los próximos 7 días...</span>
-              </div>
-              <div v-else-if="prediccionSemanal" class="pred-result">
-                <p style="white-space:pre-line;color:#d1d5db;font-size:0.95rem;line-height:1.7">{{ prediccionSemanal.replace(/\*\*/g, '') }}</p>
-              </div>
-              <div v-else class="pred-empty">
-                <q-icon name="nights_stay" size="md" />
-                <span>Presiona "Generar" para recibir tu predicción.</span>
-              </div>
-              <div v-if="errorSemanal" style="color:#ef4444;font-size:0.85rem;margin-top:0.5rem">{{ errorSemanal }}</div>
-            </div>
+            
 
             <!-- Compatibilidad Numerológica (derecha) -->
             <div class="compat-section">
@@ -232,7 +189,7 @@
         </div>
       </div>
     </footer>
-  </div>
+  </q-page>
 </template>
 
 <script setup>
@@ -469,127 +426,6 @@ $text-gray-dark: #9ca3af;
   min-height: 100vh;
   background: $bg-dark;
   color: $text-gray-light;
-}
-
-// NAVBAR
-.navbar {
-  position: sticky;
-  top: 0;
-  z-index: 50;
-  width: 100%;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  background: rgba($bg-dark, 0.8);
-  backdrop-filter: blur(12px);
-
-  .navbar-container {
-    max-width: 112rem;
-    margin: 0 auto;
-    padding: 0 1rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    height: 5rem;
-
-    @media (max-width: 640px) {
-      padding: 0 1rem;
-    }
-  }
-
-  .navbar-logo {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    flex-shrink: 0;
-
-    .logo-icon {
-      width: 2.5rem;
-      height: 2.5rem;
-      border-radius: 50%;
-      background: rgba($primary, 0.2);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border: 1px solid rgba($primary, 0.3);
-    }
-
-    .logo-text {
-      font-family: 'Newsreader', serif;
-      font-size: 1.5rem;
-      font-weight: 600;
-      letter-spacing: 0.05em;
-      color: white;
-      
-
-      .text-primary {
-        color: $primary;
-      }
-    }
-  }
-
-  .navbar-menu {
-    display: flex;
-    align-items: center;
-    gap: 2rem;
-
-    .nav-link {
-      color: #d1d5db;
-      text-decoration: none;
-      font-size: 1.125rem;
-      transition: color 0.3s;
-      padding-bottom: 0.25rem;
-
-      &:hover {
-        color: white;
-      }
-
-      &.active {
-        color: $primary;
-        border-bottom: 2px solid $primary;
-      }
-    }
-
-    .nav-divider {
-      width: 1px;
-      height: 1.5rem;
-      background: rgba(255, 255, 255, 0.1);
-    }
-
-    .profile-btn {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      color: #d1d5db;
-      background: none;
-      border: none;
-      cursor: pointer;
-      transition: color 0.3s;
-      font-size: 1rem;
-
-      &:hover {
-        color: white;
-      }
-
-      .profile-avatar {
-        width: 2rem;
-        height: 2rem;
-        border-radius: 50%;
-        border: 1px solid #4b5563;
-        object-fit: cover;
-      }
-    }
-  }
-
-  .menu-btn {
-    background: none;
-    border: none;
-    color: #d1d5db;
-    cursor: pointer;
-    transition: color 0.3s;
-
-    &:hover {
-      color: white;
-    }
-  }
 }
 
 // MAIN CONTENT

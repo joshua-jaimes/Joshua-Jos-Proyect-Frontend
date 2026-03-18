@@ -1,38 +1,26 @@
 <template>
-  <q-layout view="hHh lpR fFf" class="profile-layout">
-
-    <!-- ══════════ HEADER ══════════ -->
-    <q-header class="profile-header" bordered>
-      <div class="header-inner row items-center justify-between">
-
-        <!-- Breadcrumb -->
-        <div class="row items-center" style="gap:8px;font-size:14px">
-          <a href="#" class="breadcrumb-link">Inicio</a>
-          <span class="mso breadcrumb-chevron">chevron_right</span>
-          <span class="breadcrumb-current">Perfil</span>
-        </div>
-
-        <!-- Right actions -->
-        <div class="row items-center" style="gap:16px">
-
-          <div class="header-divider" />
-          <div class="row items-center user-header-row">
-            <div class="text-right gt-xs" style="margin-right:12px">
-              <p class="user-header-name">{{ auth.usuario?.nombre || 'Usuario' }}</p>
-              <p class="user-header-tier">{{ rolLabel }}</p>
-            </div>
-            <div class="header-avatar-ring">
-              <img :src="avatarUrl" class="header-avatar-img" alt=""/>
-            </div>
+  <q-page class="profile-page">
+    <!-- Header simple con Volver -->
+    <div class="row items-center justify-between" style="padding: 16px 32px; border-bottom: 1px solid #322640; background: rgba(28,20,38,0.5); z-index: 10;">
+      <div class="row items-center" style="gap:8px;font-size:14px">
+        <button @click="router.back()" style="background: none; border: none; color: #94a3b8; cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; padding: 0;">
+          <q-icon name="arrow_back" size="sm" />
+          Volver atrás
+        </button>
+      </div>
+      <!-- Right actions -->
+      <div class="row items-center" style="gap:16px">
+        <div class="row items-center user-header-row">
+          <div class="text-right gt-xs" style="margin-right:12px">
+            <p class="user-header-name">{{ auth.usuario?.nombre || 'Usuario' }}</p>
+            <p class="user-header-tier">{{ rolLabel }}</p>
+          </div>
+          <div class="header-avatar-ring">
+            <img :src="avatarUrl" class="header-avatar-img" alt=""/>
           </div>
         </div>
-
       </div>
-    </q-header>
-
-    <!-- ══════════ PAGE ══════════ -->
-    <q-page-container>
-      <q-page class="profile-page">
+    </div>
         <div class="profile-content">
 
           <!-- ── Success Toast ── -->
@@ -262,10 +250,7 @@
           </p>
         </footer>
 
-      </q-page>
-    </q-page-container>
-
-  </q-layout>
+  </q-page>
 </template>
 
 <script setup>
@@ -417,21 +402,7 @@ function logout() {
   font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
 }
 
-/* ─── Layout ─── */
-:deep(.profile-layout) {
-  font-family: 'Manrope', sans-serif;
-  background: #120a1a !important;
-  color: #e2e8f0;
-}
 
-/* ─── Header ─── */
-:deep(.profile-header) {
-  background: rgba(28,20,38,0.5) !important;
-  backdrop-filter: blur(12px);
-  border-bottom: 1px solid #322640 !important;
-  box-shadow: none !important;
-  height: 64px;
-}
 .header-inner {
   padding: 0 32px;
   height: 64px;

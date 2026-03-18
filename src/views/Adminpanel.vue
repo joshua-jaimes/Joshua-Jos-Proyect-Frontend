@@ -10,17 +10,15 @@
 
       <nav class="sidebar-nav">
         <div class="nav-section-label">Principal</div>
-        <a href="#" class="nav-item active">
+        <router-link :to="{ name: 'adminpanel' }" class="nav-item active">
           <span class="mi nav-icon">dashboard</span>
           Panel de Control
-        </a>
+        </router-link>
         
-       
-        <a href="#" class="nav-item">
-          <span class="mi nav-icon">payments</span>
-          Pagos y Membresías
-        </a>
-        <hr class="nav-divider"/>
+        <router-link to="/admin-usuarios" class="nav-item">
+          <span class="mi nav-icon">manage_accounts</span>
+          Pagos y Gestión de Usuarios
+        </router-link>
         <div class="nav-section-label">Configuración</div>
         
         
@@ -50,9 +48,12 @@
             <div class="header-title">Vista General</div>
             <div class="header-sub">Bienvenido de nuevo, Admin</div>
           </div>
-          
+          <div>
+            <button @click="cerrarSesion" class="admin-action-btn eliminar" style="display:flex;align-items:center;gap:8px;background:rgba(239, 68, 68, 0.2);color:#ef4444;border:1px solid rgba(239,68,68,0.3);padding:8px 16px;">
+              <span class="mi" style="font-size:16px;">logout</span> Cerrar Sesión
+            </button>
+          </div>
         </header>
-
         <!-- Scrollable content -->
         <div class="content-scroll">
 
@@ -319,9 +320,17 @@ import { ref, onMounted, computed } from 'vue'
 import { getData, deleteData, putData } from '../services/apiCliente'
 import { useAuthStore } from '../stores/Auth'
 import { useNotify } from '../composables/useNotify'
+import { useRouter } from 'vue-router'
 
 const auth = useAuthStore()
+const router = useRouter()
 const { notifySuccess, notifyError, notifyWarning } = useNotify()
+
+const cerrarSesion = () => {
+  auth.logout()
+  localStorage.removeItem("token")
+  router.push({ name: 'loginUsuario' })
+}
 
 // ═══ Estado de datos ═══
 const usuarios = ref([])

@@ -142,8 +142,8 @@ import { getData } from '../services/apiCliente'
 
 const auth = useAuthStore()
 
-// ══ Acceso solo Premium (estado === 1) ══
-const esPremium = computed(() => auth.usuario?.estado === 1)
+// ══ Acceso general (Premium y Gratuito) ══
+const esPremium = computed(() => true)
 
 // ══ Cargar lecturas ══
 const todasLasLecturas = ref([])

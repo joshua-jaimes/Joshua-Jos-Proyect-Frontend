@@ -50,17 +50,27 @@
           <input v-model="usuario" type="email" placeholder="correo@ejemplo.com" required>
 
           <label>Contraseña</label>
-          <input v-model="pass" type="password" placeholder="••••••••" required>
+          <div style="position: relative; margin-bottom: 14px;">
+            <input v-model="pass" :type="showPassword ? 'text' : 'password'" placeholder="••••••••" required style="margin-bottom: 0; padding-right: 40px;">
+            <span 
+              class="material-icons" 
+              style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #9ca3af; user-select: none; transition: color 0.2s;"
+              @click="showPassword = !showPassword"
+              title="Mostrar/Ocultar contraseña"
+            >
+              {{ showPassword ? 'visibility_off' : 'visibility' }}
+            </span>
+          </div>
 
           <!-- BOTÓN LOGIN -->
           <button type="submit" class="login-btn" :disabled="cargando">
-            <q-spinner v-if="cargando" size="sm" class="q-mr-sm" />
-            <span v-else>Iniciar sesión</span>
-            <span v-if="!cargando" class="material-icons">arrow_forward</span>
-          </button>
-
+  <span v-if="cargando" class="spinner"></span>
+  <span class="material-icons" v-if="!cargando">arrow_forward</span>
+  <span v-if="!cargando">Iniciar sesión</span>
+</button>
           <!-- BOTÓN REGISTRAR -->
           <router-link to="/register" class="register-btn">
+            
             <span class="material-icons">person_add</span>
             Registrar Persona
           </router-link>
@@ -81,6 +91,7 @@ import { useNotify } from '../composables/useNotify'
 
 const usuario = ref('')
 const pass = ref('')
+const showPassword = ref(false)
 const auth = useAuthStore()
 const router = useRouter()
 const { notifySuccess, notifyError } = useNotify()
@@ -374,6 +385,21 @@ input:focus {
   background: rgba(155,77,255,.2);
   box-shadow: 0 0 15px rgba(155,77,255,.5);
   transform: translateY(-2px);
+}
+
+.spinner {
+  width: 1.2em;
+  height: 1.2em;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  display: inline-block;
+  margin-right: 8px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
 
 /* RESPONSIVE */
