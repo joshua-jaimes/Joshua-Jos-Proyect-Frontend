@@ -39,8 +39,7 @@ Copiar
   color="grey-7"
   outline
   @click="$router.push('/login')"
-  style="margin-bottom: 16px; border-radius:8px; font-weight:600; border: 1px solid red; 
-  min-height: 50px;"
+  style="margin-bottom: 16px; border-radius:8px; font-weight:600;"
 />
           <h2>Crear Cuenta</h2>
           <p>Ingresa tus datos para calcular tu numerología inicial.</p>
