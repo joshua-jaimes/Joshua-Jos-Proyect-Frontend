@@ -469,9 +469,8 @@ const tiposLectura = computed(() => {
 })
 
 const estadoSistema = computed(() => [
-  { label: 'API Backend',       estado: 'En línea',   color: '#22c55e' },
-  { label: 'Base de Datos',     estado: usuarios.value.length > 0 ? 'Conectada' : 'Sin datos', color: usuarios.value.length > 0 ? '#22c55e' : '#f59e0b' },
-  { label: 'Generador IA',      estado: lecturas.value.length > 0 ? 'Activo' : 'Sin lecturas', color: lecturas.value.length > 0 ? '#22c55e' : '#f59e0b' },
+  { label: 'Base de Datos de los Usuarios',     estado: usuarios.value.length > 0 ? 'Conectada' : 'Sin datos', color: usuarios.value.length > 0 ? '#22c55e' : '#f59e0b' },
+  { label: 'Generador De Lecturas',      estado: lecturas.value.length > 0 ? 'Activo' : 'Sin lecturas', color: lecturas.value.length > 0 ? '#22c55e' : '#f59e0b' },
   { label: 'Usuarios Activos',  estado: `${usuarios.value.filter(u => u.estado === 1).length} / ${usuarios.value.length}`, color: '#3b82f6' },
   { label: 'Lecturas Hoy',      estado: String(lecturasHoy.value), color: '#D4AF37' },
 ])
@@ -758,4 +757,4 @@ tr:hover td { background:rgba(255,255,255,0.03); }
   font-size: 11px; font-weight: 600; padding: 3px 10px;
   border-radius: 999px; border: 1px solid;
 }
-</style>
+</style>
