@@ -24,7 +24,7 @@ app.use(router)
 // Quasar — componentes registrados globalmente para todas las vistas
 app.use(Quasar, {
   plugins: { Notify },
-  components: { QIcon, QLayout, QDrawer, QPageContainer }
+  components: { QIcon, QLayout, QDrawer, QPageContainer, QBtn }
 })
 
 app.mount('#app')
