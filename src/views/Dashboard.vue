@@ -120,10 +120,12 @@
 
 
                 <button class="upgrade-btn" @click="irAMembresias" :disabled="loadingMembresia">
-                  <q-spinner v-if="loadingMembresia" size="3em" color="primary" class="q-mr-xs" />
-                  <q-icon v-else name="upgrade" size="sm" />
-                  <span>{{ loadingMembresia ? 'Cargando...' : 'Mejorar Plan' }}</span>
-                </button>
+  <span v-if="loadingMembresia" class="spinner"></span>
+  <template v-else>
+    <span class="material-icons">upgrade</span>
+  </template>
+  <span>{{ loadingMembresia ? 'Cargando...' : 'Mejorar Plan' }}</span>
+</button>
 
                 
               </div>
@@ -512,6 +514,22 @@ $gray-100: #f3f4f6;
     }
   }
 
+.spinner {
+  width: 1.2em;
+  height: 1.2em;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  display: inline-block;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+
+  
   .credits-box {
     display: flex;
     align-items: center;
