@@ -83,7 +83,7 @@
                       <span class="mi" style="font-size:16px">{{ kpi.trendIcon }}</span>
                       {{ kpi.trendVal }}
                     </span>
-                    <span class="kpi-sub">{{ kpi.trendLabel }}</span>
+                    
                   </div>
                 </template>
               </div>
