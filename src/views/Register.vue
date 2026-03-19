@@ -375,8 +375,7 @@ $surface: #231630;
   width: 100%;
   max-width: 28rem;
   margin: 0 auto;
-  border: 1px solid red; 
-  min-height: 50px;
+  
   
   h2 {
     font-size: 1.875rem;
