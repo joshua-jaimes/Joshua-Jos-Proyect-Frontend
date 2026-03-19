@@ -33,14 +33,9 @@ Copiar
         <div class="top-link gt-md">¿Ya tienes cuenta? <a href="#">Inicia sesión</a></div>
         <div class="form-section">
           <!-- Botón Volver -->
-          <q-btn
-  label="Volver al Login"
-  icon="arrow_back"
-  color="grey-7"
-  outline
-  @click="$router.push('/login')"
-  style="margin-bottom: 16px; border-radius:8px; font-weight:600;"
-/>
+          <button @click="router.push('/login')" style="padding:10px 20px;">
+  Volver al Login
+</button>
           <h2>Crear Cuenta</h2>
           <p>Ingresa tus datos para calcular tu numerología inicial.</p>
           <form @submit.prevent="submit" class="form" novalidate>
