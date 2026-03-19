@@ -305,7 +305,7 @@ const getHeaders = () => {
 const cargarUsuarios = async () => {
   try {
     cargando.value = true
-    const res = await axios.get('http://localhost:3000/api/usuario', getHeaders())
+    const res = await axios.get("https://tu-backend.onrender.com/api/usuario", getHeaders())
     console.log('✅ Respuesta API:', res.data)
     // Soporta { usuarios: [...] } o directamente [...]
     usuarios.value = res.data.usuarios ?? res.data ?? []
