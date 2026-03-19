@@ -432,7 +432,7 @@ const kpiCards = computed(() => [
   { label:'Usuarios Registrados', value: totalUsuarios.value, icon:'person_outline', iconColor:'#3b82f6', iconBg:'rgba(59,130,246,0.1)', bubbleColor:'rgba(59,130,246,0.1)', trendClass:'up', trendIcon:'arrow_upward', trendVal:'Real', trendLabel:'desde la BD' },
   { label:'Lecturas Generadas Hoy', value: lecturasHoy.value, icon:'psychology', iconColor:'#7311d4', iconBg:'rgba(168,85,247,0.1)', bubbleColor:'rgba(115,17,212,0.1)', trendClass:'up', trendIcon:'auto_awesome', trendVal:'Hoy', trendLabel:'lecturas del día' },
   { label:'Lecturas IA Totales', value: lecturas.value.length, icon:'smart_toy', iconColor:'#22c55e', iconBg:'rgba(34,197,94,0.1)', bubbleColor:'rgba(34,197,94,0.1)', trendClass:'up', trendIcon:'arrow_upward', trendVal:'Total', trendLabel:'todas las lecturas' },
-  { label:'Usuarios Activos', value: usuarios.value.filter(u => u.estado === 1).length, icon:'verified_user', iconColor:'#D4AF37', iconBg:'rgba(212,175,55,0.1)', bubbleColor:'rgba(212,175,55,0.1)', trendClass:'up', trendIcon:'check_circle', trendVal:'Estado=1', trendLabel:'activos en el sistema' },
+  { label:'Usuarios Activos', value: usuarios.value.filter(u => u.estado === 1).length, icon:'verified_user', iconColor:'#D4AF37', iconBg:'rgba(212,175,55,0.1)', bubbleColor:'rgba(212,175,55,0.1)', trendClass:'up', trendIcon:'check_circle', trendVal:'Estado', trendLabel:'activos en el sistema' },
 ])
 
 // ═══ Gráfico de barras dinámico (datos reales de la BD) ═══
