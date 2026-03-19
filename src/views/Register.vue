@@ -30,7 +30,7 @@ Copiar
         </div>
       </div>
       <div class="right">
-        <div class="top-link gt-md">¿Ya tienes cuenta? <a href="#">Inicia sesión</a></div>
+        <div class="top-link gt-md"  @click="router.push('/login')">¿Ya tienes cuenta? <a href="#">Inicia sesión</a></div>
         <div class="form-section">
           <!-- Botón Volver -->
           <button @click="router.push('/login')" style="padding:10px 20px;">
