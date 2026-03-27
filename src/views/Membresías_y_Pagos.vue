@@ -62,9 +62,11 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/Auth.js'
 import { postData } from '../services/apiCliente.js'
+import { useNotify } from '../composables/useNotify.js'
 
 const router = useRouter()
 const auth = useAuthStore()
+const { notifyError } = useNotify()
 
 // annualBilling eliminado — solo plan mensual
 const activePayTab  = ref('card')
@@ -88,17 +90,27 @@ const pagarConMercadoPago = async () => {
       cantidad: 1,
       usuario_id: auth.usuario?._id || null,
     })
-    // Redirigir al Checkout Pro (usar sandbox_init_point para pruebas)
-    const url = data.sandbox_init_point || data.init_point
+
+    // ← cambiar a false cuando vayas a producción
+    const esSandbox = true
+    const url = esSandbox
+      ? (data.sandbox_init_point || data.init_point)
+      : data.init_point
+
     if (url) {
       window.location.href = url
+    } else {
+      console.error('No se recibió URL de pago de Mercado Pago')
+      notifyError('No se pudo iniciar el pago, intenta de nuevo', 'error_outline')
     }
   } catch (error) {
     console.error('Error al iniciar pago:', error)
+    notifyError('Error al conectar con Mercado Pago, intenta de nuevo', 'error_outline')
   } finally {
     loadingMP.value = false
   }
 }
+
 
 const premiumFeatures = [
   'Lecturas de IA ilimitadas',

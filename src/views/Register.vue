@@ -84,10 +84,12 @@ Copiar
               </div>
             </div>
             <button type="submit" class="btn-submit" :disabled="cargando">
-              <q-spinner v-if="cargando" size="sm" class="q-mr-sm" />
-              <span v-else>Calcular mi Numerología</span>
-              <q-icon v-if="!cargando" name="arrow_forward" size="18px" />
-            </button>
+  <span v-if="cargando" class="spinner"></span>
+  <template v-else>
+    <span>Calcular mi Numerología</span>
+    <span class="material-icons" style="font-size:18px;">arrow_forward</span>
+  </template>
+</button>
           </form>
 
           <div class="bottom-link lt-md">¿Ya tienes cuenta? <a href="#">Inicia sesión</a></div>
@@ -122,19 +124,66 @@ const cargando = ref(false)
 const { notifySuccess, notifyError } = useNotify()
 
 const submit = async () => {
+  // ── NOMBRE ──────────────────────────────────────────────────
   if (!data.value.name?.trim()) {
     notifyError('El nombre es obligatorio', 'error_outline')
     return
   }
+  if (data.value.name.trim().length < 3) {
+    notifyError('El nombre debe tener al menos 3 caracteres', 'error_outline')
+    return
+  }
+  if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(data.value.name.trim())) {
+    notifyError('El nombre solo puede contener letras y espacios', 'error_outline')
+    return
+  }
+
+  // ── EDAD ────────────────────────────────────────────────────
+  if (data.value.age === '' || data.value.age === null || data.value.age === undefined) {
+    notifyError('La edad es obligatoria', 'error_outline')
+    return
+  }
+  const edadNum = Number(data.value.age)
+  if (isNaN(edadNum) || !Number.isInteger(edadNum)) {
+    notifyError('La edad debe ser un número válido', 'error_outline')
+    return
+  }
+  if (edadNum < 1) {
+    notifyError('La edad debe ser mayor a 0', 'error_outline')
+    return
+  }
+  if (edadNum < 18) {
+    notifyError('Debes ser mayor de 18 años para registrarte', 'error_outline')
+    return
+  }
+
+  // ── FECHA DE NACIMIENTO ──────────────────────────────────────
+  if (!data.value.dob) {
+    notifyError('La fecha de nacimiento es obligatoria', 'error_outline')
+    return
+  }
+  const fechaNac = new Date(data.value.dob)
+  if (isNaN(fechaNac.getTime())) {
+    notifyError('El formato de la fecha de nacimiento no es válido', 'error_outline')
+    return
+  }
+  if (fechaNac >= new Date()) {
+    notifyError('La fecha de nacimiento no puede ser una fecha futura', 'error_outline')
+    return
+  }
+
+  // ── EMAIL ────────────────────────────────────────────────────
   if (!data.value.email?.trim()) {
-    notifyError('El email es obligatorio', 'error_outline')
+    notifyError('El correo electrónico es obligatorio', 'error_outline')
     return
   }
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
   if (!emailRegex.test(data.value.email)) {
-    notifyError('Formato de email inválido', 'error_outline')
+    notifyError('El formato del correo electrónico no es válido (ej: nombre@ejemplo.com)', 'error_outline')
     return
   }
+
+  // ── CONTRASEÑA ───────────────────────────────────────────────
   if (!data.value.password) {
     notifyError('La contraseña es obligatoria', 'error_outline')
     return
@@ -143,36 +192,54 @@ const submit = async () => {
     notifyError('La contraseña debe tener mínimo 8 caracteres', 'error_outline')
     return
   }
+  if (!/[A-Z]/.test(data.value.password)) {
+    notifyError('La contraseña debe incluir al menos una letra mayúscula', 'error_outline')
+    return
+  }
   if (!/\d/.test(data.value.password)) {
     notifyError('La contraseña debe incluir al menos un número', 'error_outline')
     return
   }
+
+  // ── CONFIRMAR CONTRASEÑA ─────────────────────────────────────
   if (data.value.password !== data.value.confirmPassword) {
-    notifyError('Las contraseñas no coinciden', 'error_outline')
+    notifyError('Las contraseñas no coinciden, verifica e intenta de nuevo', 'error_outline')
     return
   }
 
-  // Prepara payload sin confirmPassword
+  // ── ENVÍO AL BACKEND ─────────────────────────────────────────
   const payload = { ...data.value }
   delete payload.confirmPassword
 
   cargando.value = true
   try {
-    const response = await axiosInstance.post(
-      "/usuario/register",
-      payload
-    )
-
+    const response = await axiosInstance.post("/usuario/register", payload)
     notifySuccess('Usuario registrado correctamente. Bienvenido al universo.', 'person_add')
     console.log(response.data)
-
   } catch (error) {
     console.error(error)
-    notifyError(error.response?.data?.error || error.response?.data?.message || error.response?.data?.msg || 'Error al registrar usuario', 'error_outline')
+    const status  = error.response?.status
+    const msg     = error.response?.data?.error
+                 || error.response?.data?.message
+                 || error.response?.data?.msg
+
+    // Mensajes específicos según el tipo de error del backend
+    if (status === 400 && msg?.toLowerCase().includes('email')) {
+      notifyError('Este correo ya está registrado, intenta con uno diferente', 'error_outline')
+    } else if (status === 400 && msg?.toLowerCase().includes('duplicado')) {
+      notifyError('Este usuario ya existe en el sistema', 'error_outline')
+    } else if (status === 409) {
+      notifyError('Este correo o usuario ya está registrado, intenta con uno diferente', 'error_outline')
+    } else if (status >= 500) {
+      notifyError('Ocurrió un error en el servidor, intenta de nuevo más tarde', 'error_outline')
+    } else {
+      notifyError(msg || 'Error al registrar usuario, verifica los datos e intenta de nuevo', 'error_outline')
+    }
   } finally {
     cargando.value = false
   }
 }
+
 </script>
 
 <style scoped lang="scss">
@@ -219,6 +286,23 @@ $surface: #231630;
     }
   }
 }
+
+.spinner {
+  width: 1.2em;
+  height: 1.2em;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  display: inline-block;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+
+
 
 .card {
   max-width: 112rem;
