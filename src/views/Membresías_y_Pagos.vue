@@ -80,29 +80,24 @@ const loadingMP     = ref(false)
 const precioActual = () => 29000                          // COP
 const tituloActual = () => 'Plan Premium Mensual - NumeraAI'
 
-// ══ Pagar con Mercado Pago ══
+// ══ Pagar con Mercado Pago (Checkout Pro — redirección pura) ══
 const pagarConMercadoPago = async () => {
   try {
     loadingMP.value = true
-    const data = await postData('/mercadopago/create-preference', {
-      titulo: tituloActual(),
-      precio: precioActual(),
-      cantidad: 1,
+
+    const res = await postData('/mercadopago/create-preference', {
       usuario_id: auth.usuario?._id || null,
     })
 
-    // ← cambiar a false cuando vayas a producción
-    const esSandbox = true
-    const url = esSandbox
-      ? (data.sandbox_init_point || data.init_point)
-      : data.init_point
+    const id = res.id
 
-    if (url) {
-      window.location.href = url
-    } else {
-      console.error('No se recibió URL de pago de Mercado Pago')
+    if (!id) {
       notifyError('No se pudo iniciar el pago, intenta de nuevo', 'error_outline')
+      return
     }
+
+    window.location.href = `https://www.mercadopago.com.co/checkout/v1/redirect?pref_id=${id}`
+
   } catch (error) {
     console.error('Error al iniciar pago:', error)
     notifyError('Error al conectar con Mercado Pago, intenta de nuevo', 'error_outline')
@@ -110,6 +105,7 @@ const pagarConMercadoPago = async () => {
     loadingMP.value = false
   }
 }
+
 
 
 const premiumFeatures = [

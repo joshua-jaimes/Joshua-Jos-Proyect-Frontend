@@ -1,8 +1,11 @@
-asar · VUE
-Copiar
-
 <template>
   <div class="page">
+    <!-- Botón Volver Fijo -->
+    <button class="btn-back-fixed" @click="router.back()">
+      <q-icon name="arrow_back" size="18px" />
+      <span>Volver</span>
+    </button>
+    
     <div class="bg"></div>
     <div class="card">
       <div class="left gt-sm">
@@ -72,7 +75,7 @@ Copiar
               <label>Contraseña</label>
               <div class="input-wrapper">
                 <q-icon name="lock_outline" />
-                <input v-model="data.password" :type="showPwd ? 'text' : 'password'" placeholder="••••••••" />
+                <input v-model="data.password" autocomplete="new-password" :type="showPwd ? 'text' : 'password'" placeholder="••••••••" />
                 <q-icon :name="showPwd ? 'visibility' : 'visibility_off'" class="toggle-pwd" @click="showPwd=!showPwd" />
               </div>
             </div>
@@ -80,7 +83,8 @@ Copiar
               <label>Confirmar Contraseña</label>
               <div class="input-wrapper">
                 <q-icon name="lock_outline" />
-                <input v-model="data.confirmPassword" :type="showPwd ? 'text' : 'password'" placeholder="••••••••" />
+                <input v-model="data.confirmPassword" autocomplete="new-password" :type="showPwd ? 'text' : 'password'" placeholder="••••••••" />
+                <q-icon :name="showPwd ? 'visibility' : 'visibility_off'" class="toggle-pwd" @click="showPwd=!showPwd" />
               </div>
             </div>
             <button type="submit" class="btn-submit" :disabled="cargando">
@@ -101,7 +105,7 @@ Copiar
 
 <script setup>
 
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'   
 import axiosInstance from '../plugins/pluginAxios.js'
 import { useNotify } from '../composables/useNotify'
@@ -122,6 +126,12 @@ const data = ref({
 const showPwd = ref(false)
 const cargando = ref(false)
 const { notifySuccess, notifyError } = useNotify()
+
+onMounted(() => {
+  // Fuerza a que los campos inicien limpios si el navegador intenta autocompletarlos
+  data.value.password = ''
+  data.value.confirmPassword = ''
+})
 
 const submit = async () => {
   // ── NOMBRE ──────────────────────────────────────────────────
@@ -170,6 +180,32 @@ const submit = async () => {
   if (fechaNac >= new Date()) {
     notifyError('La fecha de nacimiento no puede ser una fecha futura', 'error_outline')
     return
+  }
+
+  // ── COINCIDENCIA DE EDAD Y FECHA ─────────────────────────────
+  // Parseo seguro de "YYYY-MM-DD" a componentes enteros para evitar problemas de zonas horarias
+  const partesFecha = data.value.dob.split('-')
+  if (partesFecha.length === 3) {
+    const bYear = parseInt(partesFecha[0], 10)
+    const bMonth = parseInt(partesFecha[1], 10)
+    const bDay = parseInt(partesFecha[2], 10)
+
+    const today = new Date()
+    const currentYear = today.getFullYear()
+    const currentMonth = today.getMonth() + 1 // en JS los meses van de 0 a 11
+    const currentDay = today.getDate()
+
+    // Cálculo exacto de la edad real
+    let edadCalculada = currentYear - bYear
+    if (currentMonth < bMonth || (currentMonth === bMonth && currentDay < bDay)) {
+      edadCalculada-- // Aún no ha cumplido años este año
+    }
+
+    // Verificación final
+    if (edadCalculada !== edadNum) {
+      notifyError('La edad no coincide con la fecha de nacimiento. Verifica los datos.', 'error_outline')
+      return
+    }
   }
 
   // ── EMAIL ────────────────────────────────────────────────────
@@ -305,7 +341,7 @@ $surface: #231630;
 
 
 .card {
-  max-width: 112rem;
+  max-width: 70rem; /* Mejor límite de ancho ~1120px */
   width: 100%;
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -321,6 +357,11 @@ $surface: #231630;
   
   @media (max-width: 1024px) {
     grid-template-columns: 1fr;
+    max-width: 35rem; /* Centra el diseño cuando colapsa */
+  }
+  
+  @media (max-width: 768px) {
+    max-width: 100%;
   }
 }
 
@@ -436,21 +477,34 @@ $surface: #231630;
   flex-direction: column;
   justify-content: center;
   position: relative;
+  width: 100%;
+  box-sizing: border-box; /* Previene desbordamiento */
+  
+  /* Ajustes para tablet/móvil */
+  @media (max-width: 768px) {
+    padding: 2rem 1.5rem 5rem 1.5rem; /* El 5rem de abajo es para que no se pise con el footer fijo */
+  }
+  
+  @media (max-width: 480px) {
+    padding: 1.5rem 1rem 4.5rem 1rem;
+  }
 }
 
 .top-link {
-  position: absolute;
-  top: 0;
-  right: 0;
-  padding: 2rem;
+  /* position: absolute REEMPLAZADO por flujo normal */
+  width: 100%;
+  text-align: right;
+  margin-bottom: 1.5rem;
   font-size: 0.875rem;
   color: #9ca3af;
+  word-wrap: break-word; /* Rompe el texto si no cabe */
   
   a {
     color: $primary;
     text-decoration: none;
     font-weight: 500;
     margin-left: 0.25rem;
+    white-space: nowrap; /* Evita que el hipervínculo se parta feo */
     
     &:hover { color: $light; }
   }
@@ -497,6 +551,7 @@ $surface: #231630;
     position: relative;
     display: flex;
     align-items: center;
+    width: 100%;
     
     i {
       position: absolute;
@@ -508,7 +563,8 @@ $surface: #231630;
     
     input {
       width: 100%;
-      padding: 0.75rem 0.75rem 0.75rem 2.5rem;
+      box-sizing: border-box; /* FUNDAMENTAL para que padding no rompa el ancho en móviles */
+      padding: 0.75rem 2.5rem 0.75rem 2.5rem; /* El primer 2.5rem da espacio al botón del ojo, el segundo al candado */
       border: 1px solid #374151;
       border-radius: 0.5rem;
       background: rgba($bg, 0.5);
@@ -536,9 +592,12 @@ $surface: #231630;
     
     .toggle-pwd {
       position: absolute;
+      left: auto; /* IMPORTANTE: Anula el left del selector 'i' general */
       right: 0.75rem;
       cursor: pointer;
       color: #6b7280;
+      pointer-events: auto; /* Restaurar poder hacer click */
+      z-index: 10; /* Asegura quedar por encima de otros inputs/textos */
       
       &:hover { color: #d1d5db; }
     }
@@ -557,6 +616,7 @@ $surface: #231630;
 
 .btn-submit {
   width: 100%;
+  box-sizing: border-box;
   padding: 0.75rem 1rem;
   border: none;
   border-radius: 0.5rem;
@@ -639,10 +699,24 @@ $surface: #231630;
 }
 
 .bottom-link {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: $bg; /* Mismo fondo de la app */
   text-align: center;
   font-size: 0.875rem;
   color: #9ca3af;
-  margin-top: 2rem;
+  padding: 1rem;
+  z-index: 50; /* Que quede siempre frente a los inputs al hacer scroll */
+  box-sizing: border-box;
+  margin: 0; /* Resetea el margin previo */
+  border-top: 1px solid rgba($primary, 0.3); /* Separador sutil */
+  
+  @media (max-width: 600px) {
+    font-size: 0.8rem;
+    padding: 0.8rem;
+  }
   
   a {
     color: $primary;
@@ -664,5 +738,41 @@ $surface: #231630;
 
 .lt-md {
   @media (min-width: 768px) { display: none; }
+}.btn-back-fixed {
+  position: fixed;
+  top: 15px;
+  left: 15px;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1.2rem;
+  background: rgba($surface, 0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba($primary, 0.4);
+  border-radius: 2rem; /* Forma de píldora */
+  color: #e5e7eb;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+
+  &:hover {
+    background: $primary;
+    color: white;
+    border-color: $light;
+    box-shadow: 0 6px 16px rgba($primary, 0.4);
+    transform: translateY(-2px); /* Pequeño salto al hacer hover */
+  }
+
+  /* Ajustes responsivos para pantallas más pequeñas */
+  @media (max-width: 600px) {
+    top: 10px;
+    left: 10px;
+    padding: 0.4rem 0.9rem;
+    font-size: 0.8rem;
+  }
 }
 </style>

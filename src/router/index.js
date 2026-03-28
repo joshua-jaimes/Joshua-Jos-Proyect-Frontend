@@ -10,6 +10,9 @@ import GeneradorNumeroPrincipal from '../views/GeneradorNumeroPrincipal.vue'
 import PerfilUsuario from '../views/PerfilUsuario.vue'
 import MembresiasYPagos from '../views/Membresías_y_Pagos.vue'
 import MisLecturas from '../views/MisLecturas.vue'
+import PagoExitoso from '../views/PagoExitoso.vue'
+import PagoFallido from '../views/PagoFallido.vue'
+import PagoPendiente from '../views/PagoPendiente.vue'
 /* import LoginAdministrador from '../views/loginAdministrador.vue' */
 
 import MainLayout from '../layouts/MainLayout.vue'
@@ -34,6 +37,22 @@ const routes = [
     path: '/admin-usuarios',
     name: 'AdminUsuarios',
     component: AdminUsuarios
+  },
+  // Rutas de resultados de pago (sin layout, accesibles sin auth para que MP redirija)
+  {
+    path: '/pago-exitoso',
+    name: 'PagoExitoso',
+    component: PagoExitoso
+  },
+  {
+    path: '/pago-fallido',
+    name: 'PagoFallido',
+    component: PagoFallido
+  },
+  {
+    path: '/pago-pendiente',
+    name: 'PagoPendiente',
+    component: PagoPendiente
   },
   {
     path: '/',
