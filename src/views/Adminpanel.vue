@@ -150,31 +150,43 @@
                   <tr v-else-if="usuariosFiltrados.length === 0">
                     <td colspan="6" style="text-align:center;color:#64748b">No se encontraron usuarios.</td>
                   </tr>
-                  <tr v-for="u in usuariosFiltrados" :key="u._id">
-                    <td><div class="u-name">{{ u.nombre }}</div></td>
-                    <td><div class="u-email">{{ u.email }}</div></td>
-                    <td class="t-date">{{ u.fechanacimiento ? new Date(u.fechanacimiento).toLocaleDateString('es-CO') : '-' }}</td>
+                  <tr v-for="usuario in usuariosPaginados" :key="usuario._id">
+                    <td><div class="u-name">{{ usuario.nombre }}</div></td>
+                    <td><div class="u-email">{{ usuario.email }}</div></td>
+                    <td class="t-date">{{ usuario.fechanacimiento ? new Date(usuario.fechanacimiento).toLocaleDateString('es-CO') : '-' }}</td>
                     <td>
-                      <span class="badge" :class="u.rol === 'admin' ? 'badge-purple' : 'badge-yellow'">
-                        {{ u.rol || 'usuario' }}
+                      <span class="badge" :class="usuario.rol === 'admin' ? 'badge-purple' : 'badge-yellow'">
+                        {{ usuario.rol || 'usuario' }}
                       </span>
                     </td>
                     <td>
-                      <span class="badge" :class="u.estado === 1 ? 'badge-green' : 'badge-red'">
-                        <span class="badge-dot" :class="u.estado === 1 ? 'badge-dot-green' : 'badge-dot-red'"></span>
-                        {{ u.estado === 1 ? 'Activo' : 'Inactivo' }}
+                      <span class="badge" :class="usuario.estado === 1 ? 'badge-green' : 'badge-red'">
+                        <span class="badge-dot" :class="usuario.estado === 1 ? 'badge-dot-green' : 'badge-dot-red'"></span>
+                        {{ usuario.estado === 1 ? 'Activo' : 'Inactivo' }}
                       </span>
                     </td>
                     <td style="text-align:right">
                       <div style="display:flex;gap:8px;justify-content:flex-end">
-                        <button class="admin-action-btn activar" v-if="u.estado !== 1" @click="activarUsuario(u._id)">Activar</button>
-                        <button class="admin-action-btn inactivar" v-else @click="inactivarUsuario(u._id)">Desactivar</button>
-                        <button class="admin-action-btn eliminar" @click="eliminarUsuario(u._id, u.nombre)">Eliminar</button>
+                        <button class="admin-action-btn activar" v-if="usuario.estado !== 1" @click="activarUsuario(usuario._id)">Activar</button>
+                        <button class="admin-action-btn inactivar" v-else @click="inactivarUsuario(usuario._id)">Desactivar</button>
+                        <button class="admin-action-btn eliminar" @click="eliminarUsuario(usuario._id, usuario.nombre)">Eliminar</button>
                       </div>
                     </td>
                   </tr>
                 </tbody>
               </table>
+            </div>
+
+            <!-- 📄 Paginación Visual -->
+            <div class="q-mt-lg flex flex-center" style="padding: 20px 0; border-top: 1px solid rgba(255,255,255,0.05);">
+              <q-pagination
+                v-model="paginaActual"
+                :max="totalPaginas"
+                direction-links
+                boundary-links
+                color="primary"
+                size="md"
+              />
             </div>
           </div>
 
@@ -316,7 +328,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, watch } from 'vue'
 import { getData, deleteData, putData } from '../services/apiCliente'
 import { useAuthStore } from '../stores/Auth'
 import { useNotify } from '../composables/useNotify'
@@ -353,6 +365,24 @@ const usuariosFiltrados = computed(() => {
     u.nombre?.toLowerCase().includes(q) ||
     u.email?.toLowerCase().includes(q)
   )
+})
+
+// ── Paginación ────────────────────────────────────────────────
+const paginaActual = ref(1)
+const usuariosPorPagina = 10
+
+const totalPaginas = computed(() => {
+  return Math.ceil(usuariosFiltrados.value.length / usuariosPorPagina) || 1
+})
+
+const usuariosPaginados = computed(() => {
+  const inicio = (paginaActual.value - 1) * usuariosPorPagina
+  const fin = inicio + usuariosPorPagina
+  return usuariosFiltrados.value.slice(inicio, fin)
+})
+
+watch(busqueda, () => {
+  paginaActual.value = 1
 })
 
 // ═══ Cargar usuarios ═══

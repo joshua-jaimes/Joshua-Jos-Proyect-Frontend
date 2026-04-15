@@ -101,40 +101,40 @@
                       No hay usuarios registrados
                     </td>
                   </tr>
-                  <tr v-for="u in usuariosFiltrados" :key="u._id">
-                    <td class="td-id">...{{ u._id ? u._id.substring(18) : '-' }}</td>
+                  <tr v-for="usuario in usuariosPaginados" :key="usuario._id">
+                    <td class="td-id">...{{ usuario._id ? usuario._id.substring(18) : '-' }}</td>
                     <td>
                       <div style="display:flex; align-items:center; gap:10px;">
-                        <div class="user-avatar-mini">{{ u.nombre?.charAt(0)?.toUpperCase() || '?' }}</div>
-                        <span style="font-weight:600; color:#fff;">{{ u.nombre }}</span>
+                        <div class="user-avatar-mini">{{ usuario.nombre?.charAt(0)?.toUpperCase() || '?' }}</div>
+                        <span style="font-weight:600; color:#fff;">{{ usuario.nombre }}</span>
                       </div>
                     </td>
-                    <td style="color:#94a3b8;">{{ u.email }}</td>
+                    <td style="color:#94a3b8;">{{ usuario.email }}</td>
                     <td style="text-align:center;">
-                      <span class="badge" :class="u.estado === 1 ? 'badge-purple' : 'badge-yellow'">
-                        {{ u.estado === 1 ? '★ Premium' : 'Gratuito' }}
+                      <span class="badge" :class="usuario.estado === 1 ? 'badge-purple' : 'badge-yellow'">
+                        {{ usuario.estado === 1 ? '★ Premium' : 'Gratuito' }}
                       </span>
                     </td>
                     <td style="text-align:center;">
-                      <span class="badge" :class="u.activo !== false ? 'badge-green' : 'badge-red'">
-                        <span class="badge-dot" :class="u.activo !== false ? 'badge-dot-green' : 'badge-dot-red'"></span>
-                        {{ u.activo !== false ? 'Activo' : 'Inactivo' }}
+                      <span class="badge" :class="usuario.activo !== false ? 'badge-green' : 'badge-red'">
+                        <span class="badge-dot" :class="usuario.activo !== false ? 'badge-dot-green' : 'badge-dot-red'"></span>
+                        {{ usuario.activo !== false ? 'Activo' : 'Inactivo' }}
                       </span>
                     </td>
                     <td>
                       <div style="display:flex; gap:6px; justify-content:flex-end;">
                         <!-- Editar -->
-                        <button class="icon-btn btn-gold" @click="abrirModificar(u)" title="Editar">
+                        <button class="icon-btn btn-gold" @click="abrirModificar(usuario)" title="Editar">
                           <span class="mi" style="font-size:16px;">edit</span>
                         </button>
                         <!-- Toggle estado -->
                        
                         <!-- Toggle plan -->
-                        <button class="icon-btn btn-purple" @click="togglePlan(u)" :title="u.estado === 1 ? 'Pasar a Gratuito' : 'Activar Premium'">
-                          <span class="mi" style="font-size:16px;">{{ u.estado === 1 ? 'star_border' : 'star' }}</span>
+                        <button class="icon-btn btn-purple" @click="togglePlan(usuario)" :title="usuario.estado === 1 ? 'Pasar a Gratuito' : 'Activar Premium'">
+                          <span class="mi" style="font-size:16px;">{{ usuario.estado === 1 ? 'star_border' : 'star' }}</span>
                         </button>
                         <!-- Eliminar -->
-                        <button class="icon-btn btn-red" @click="confirmarEliminar(u)" title="Eliminar">
+                        <button class="icon-btn btn-red" @click="confirmarEliminar(usuario)" title="Eliminar">
                           <span class="mi" style="font-size:16px;">delete</span>
                         </button>
                       </div>
@@ -142,6 +142,18 @@
                   </tr>
                 </tbody>
               </table>
+            </div>
+
+            <!-- 📄 Paginación Visual Solicitada -->
+            <div class="q-mt-lg flex flex-center" style="padding: 20px 0; border-top: 1px solid rgba(255,255,255,0.05);">
+              <q-pagination
+                v-model="paginaActual"
+                :max="totalPaginas"
+                direction-links
+                boundary-links
+                color="primary"
+                size="md"
+              />
             </div>
 
           </div>
@@ -251,7 +263,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/Auth'
 import axios from 'axios'
@@ -291,6 +303,25 @@ const usuariosFiltrados = computed(() => {
     u.nombre?.toLowerCase().includes(q) ||
     u.email?.toLowerCase().includes(q)
   )
+})
+
+// ── Paginación ────────────────────────────────────────────────
+const paginaActual = ref(1)
+const usuariosPorPagina = 10
+
+const totalPaginas = computed(() => {
+  return Math.ceil(usuariosFiltrados.value.length / usuariosPorPagina) || 1
+})
+
+const usuariosPaginados = computed(() => {
+  const inicio = (paginaActual.value - 1) * usuariosPorPagina
+  const fin = inicio + usuariosPorPagina
+  return usuariosFiltrados.value.slice(inicio, fin)
+})
+
+// Volver a la página 1 cuando se realiza una búsqueda nueva
+watch(busqueda, () => {
+  paginaActual.value = 1
 })
 
 // ── Headers con token ─────────────────────────────────────────

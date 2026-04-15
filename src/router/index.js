@@ -8,11 +8,13 @@ import Adminpanel from '../views/Adminpanel.vue'
 import AdminUsuarios from '../views/AdminUsuarios.vue'
 import GeneradorNumeroPrincipal from '../views/GeneradorNumeroPrincipal.vue'
 import PerfilUsuario from '../views/PerfilUsuario.vue'
-import MembresiasYPagos from '../views/Membresías_y_Pagos.vue'
+import MembresiasYPagos from '../views/Membresias_y_Pagos.vue'
 import MisLecturas from '../views/MisLecturas.vue'
 import PagoExitoso from '../views/PagoExitoso.vue'
 import PagoFallido from '../views/PagoFallido.vue'
 import PagoPendiente from '../views/PagoPendiente.vue'
+import ResetPassword from '../views/ResetPassword.vue'
+import ForgotPassword from '../views/ForgotPassword.vue'
 /* import LoginAdministrador from '../views/loginAdministrador.vue' */
 
 import MainLayout from '../layouts/MainLayout.vue'
@@ -53,6 +55,16 @@ const routes = [
     path: '/pago-pendiente',
     name: 'PagoPendiente',
     component: PagoPendiente
+  },
+  {
+    path: '/reset-password',
+    name: 'ResetPassword',
+    component: ResetPassword
+  },
+  {
+    path: '/forgot-password',
+    name: 'ForgotPassword',
+    component: ForgotPassword
   },
   {
     path: '/',

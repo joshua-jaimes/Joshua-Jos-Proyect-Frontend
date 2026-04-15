@@ -29,13 +29,14 @@
           Desbloquea tu potencial con NumerAI. 🔮 Accede a revelaciones cuánticas y predicciones personalizadas para elevar tu frecuencia vital.
         </p>
 
-        <!-- Botón Mercado Pago con estilos interactivos mejorados -->
+        <!-- Botón Mercado Pago -->
         <q-btn
           unelevated
           size="xl"
           class="text-weight-bold full-width btn-mercado-pago"
           :loading="loadingMP"
           @click="pagarConMercadoPago"
+          style="background: #009ee3; color: white;"
         >
           <template v-slot:loading>
             <q-spinner color="white" size="1.2em" />
@@ -45,10 +46,10 @@
             💳 Pagar con Mercado Pago
           </span>
         </q-btn>
-        
+
         <!-- Sello de confianza sutil -->
         <div class="q-mt-lg text-caption text-grey-5" style="display:flex; align-items:center; justify-content:center; gap:6px; letter-spacing: 0.5px;">
-          <q-icon name="security" size="xs" color="positive" /> 
+          <q-icon name="security" size="xs" color="positive" />
           Transacción segura de alta frecuencia
         </div>
 
@@ -84,19 +85,43 @@ const tituloActual = () => 'Plan Premium Mensual - NumeraAI'
 const pagarConMercadoPago = async () => {
   try {
     loadingMP.value = true
-
-    const res = await postData('/mercadopago/create-preference', {
+    
+    // Llamada REAL al backend para generar el ID de pago
+    console.log('Enviando a API para crear preferencia:', {
+      titulo: 'Membresía Premium - Místico Pro',
+      precio: 29000,
       usuario_id: auth.usuario?._id || null,
     })
 
-    const id = res.id
+    const res = await postData('/mercadopago/create-preference', {
+      titulo: 'Membresía Premium - Místico Pro',
+      precio: 29000,
+      cantidad: 1,
+      usuario_id: auth.usuario?._id || null,
+    })
 
-    if (!id) {
-      notifyError('No se pudo iniciar el pago, intenta de nuevo', 'error_outline')
+    // ✅ REGLA CRÍTICA: token APP_USR- = producción → init_point
+    //                  token TEST-     = sandbox  → sandbox_init_point
+    // El .env tiene APP_USR-, así que SIEMPRE usamos init_point
+    const urlPago = res.init_point
+
+    console.log('🔗 Redirigiendo URL de Mercado Pago:', urlPago)
+    console.log('   init_point:', res.init_point)
+    console.log('   sandbox_init_point:', res.sandbox_init_point)
+
+    if (!urlPago) {
+      notifyError('No se pudo iniciar el pago, el backend no devolvió la URL', 'error_outline')
       return
     }
 
-    window.location.href = `https://www.mercadopago.com.co/checkout/v1/redirect?pref_id=${id}`
+    // 💾 Guardar userId ANTES de redirigir (Pinia se perdería al salir del dominio)
+    if (auth.usuario?._id) {
+      localStorage.setItem('pending_payment_user_id', auth.usuario._id)
+      console.log('💾 userId guardado en localStorage antes de redirigir a MP:', auth.usuario._id)
+    }
+
+    // Redirección directa a la pasarela de Mercado Pago
+    window.location.href = urlPago
 
   } catch (error) {
     console.error('Error al iniciar pago:', error)
@@ -106,6 +131,18 @@ const pagarConMercadoPago = async () => {
   }
 }
 
+// ══ DEV: Simular pago local directo ══
+const forzarPagoExitoso = () => {
+  const dummy_payment_id = 'test_' + Math.floor(Math.random() * 100000000)
+  router.push({
+    path: '/pago-exitoso',
+    query: {
+      payment_id: dummy_payment_id,
+      status: 'approved',
+      external_reference: auth.usuario?._id
+    }
+  })
+}
 
 
 const premiumFeatures = [
@@ -228,8 +265,8 @@ const paypalLogo        = 'https://lh3.googleusercontent.com/aida-public/AB6AXuC
 .field-label { display: block; font-size: 11px; font-weight: 500; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px; }
 .input-wrap { position: relative; }
 .input-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #9ca3af; font-size: 18px !important; pointer-events: none; }
-.pay-input { width: 100%; padding: 10px 12px 10px 40px; background: #221e10 !important; border: 1px solid #4b5563; border-radius: 8px; color: #fff; font-family: 'Manrope', sans-serif; font-size: 14px; outline: none; transition: border-color .2s, box-shadow .2s; -webkit-appearance: none; }
-.pay-input::placeholder { color: #6b7280; }
+.pay-input { width: 100%; padding: 10px 12px 10px 40px; background: #221e10 !important; border: 1px solid #4b5563; border-radius: 8px; color: #fff; font-family: 'Manrope', sans-serif; font-size: 14px; outline: none; transition: border-color .2s, box-shadow .2s; -webkit-appearance: none; appearance: none; }
+
 .pay-input:focus { border-color: #f2b90d !important; box-shadow: 0 0 0 2px rgba(242,185,13,0.2) !important; }
 .card-logos { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); display: flex; gap: 4px; align-items: center; }
 .card-logo { height: 14px; opacity: 0.7; }

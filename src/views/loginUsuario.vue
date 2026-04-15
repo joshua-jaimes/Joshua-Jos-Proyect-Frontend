@@ -68,9 +68,13 @@
   <span class="material-icons" v-if="!cargando">arrow_forward</span>
   <span v-if="!cargando">Iniciar sesión</span>
 </button>
+          <!-- BOTÓN OLVIDÉ MI CONTRASEÑA -->
+          <div style="text-align: center; margin-top: 10px;">
+            <router-link to="/forgot-password" style="color: #b980ff; font-size: 13px; text-decoration: none;">¿Olvidaste tu contraseña?</router-link>
+          </div>
+
           <!-- BOTÓN REGISTRAR -->
           <router-link to="/register" class="register-btn">
-            
             <span class="material-icons">person_add</span>
             Registrar Persona
           </router-link>

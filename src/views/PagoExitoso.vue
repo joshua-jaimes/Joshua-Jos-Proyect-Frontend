@@ -1,6 +1,6 @@
 <template>
   <q-page class="flex flex-center" style="background: radial-gradient(circle at top, #0d2b0d 0%, #0a0410 70%); min-height: 100vh;">
-    <div style="text-align:center; padding: 48px 24px;">
+    <div style="text-align:center; padding: 48px 24px; max-width: 500px;">
       <q-icon name="check_circle" color="positive" size="5rem" style="filter: drop-shadow(0 0 20px #4ade80);" />
       <h1 class="text-h4 text-white q-mt-lg q-mb-md" style="font-family:'Manrope',sans-serif;">
         ¡Pago exitoso! 🎉
@@ -9,44 +9,135 @@
         Tu membresía <strong style="color:#4ade80">Místico Pro</strong> ha sido activada.<br>
         El universo está listo para guiarte.
       </p>
-      <q-btn
-        unelevated
-        color="positive"
-        label="Ir al Dashboard"
-        icon="dashboard"
-        size="lg"
-        style="border-radius:12px; font-weight:700;"
-        @click="router.push({ name: 'dashboard' })"
-      />
+
+      <!-- Contador de redirección -->
+      <p v-if="segundos > 0" class="text-grey-5 text-caption q-mb-lg">
+        Redirigiendo al login en {{ segundos }} segundos...
+      </p>
+
+      <!-- Botones de Navegación -->
+      <div class="row q-mt-lg justify-center q-gutter-md">
+        <q-btn
+          unelevated
+          color="positive"
+          label="Ir al Dashboard"
+          icon="dashboard"
+          size="lg"
+          style="border-radius:12px; font-weight:700;"
+          @click="router.push({ name: 'dashboard' })"
+        />
+
+        <q-btn
+          outline
+          color="white"
+          label="Volver al Login"
+          icon="login"
+          size="lg"
+          style="border-radius:12px; font-weight:700; border: 2px solid rgba(255,255,255,0.4);"
+          @click="router.push({ path: '/' })"
+        />
+      </div>
     </div>
   </q-page>
 </template>
 
 <script setup>
-import { onMounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { onMounted, onUnmounted, ref } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '../stores/Auth.js'
-import { postData } from '../services/apiCliente.js'
+import { useNotify } from '../composables/useNotify.js'
+import axiosInstance from '../plugins/pluginAxios.js'
 
-const router  = useRouter()
-const auth    = useAuthStore()
+const router = useRouter()
+const route  = useRoute()
+const auth   = useAuthStore()
+const { notifySuccess, notifyError } = useNotify()
+
+const segundos = ref(4)
+let countdown = null
 
 onMounted(async () => {
-  const userId = auth.usuario?._id
-  if (!userId) return
+  // ── PASO 1: Leer parámetros que envía Mercado Pago ────────────────────────
+  // MP puede enviar: payment_id/status/external_reference  O  collection_id/collection_status
+  const payment_id = route.query.payment_id
+    || route.query.collection_id
+    || 'sin_id'
 
-  try {
-    // Actualiza en la BD: estado=1, plan='premium'
-    await postData('/usuario/activar-premium', { usuario_id: userId })
+  // Si no viene status en URL, asumimos "approved" (usuario llegó desde pantalla éxito de MP)
+  const status = route.query.status
+    || route.query.collection_status
+    || 'approved'
 
-    // Refleja el cambio en el store local sin recargar
-    if (auth.usuario) {
-      auth.usuario.estado = 1
-      auth.usuario.plan   = 'premium'
+  // external_reference lo manda MP cuando tiene parámetros; si no, usamos fallbacks
+  const external_reference = route.query.external_reference
+    || auth.usuario?._id
+    || localStorage.getItem('pending_payment_user_id')
+
+  console.log('=== [PagoExitoso] Parámetros detectados ===')
+  console.log('  payment_id       :', payment_id)
+  console.log('  status           :', status)
+  console.log('  external_reference (URL):', route.query.external_reference)
+  console.log('  userId (con fallbacks)  :', external_reference)
+
+  // ── PASO 2: Llamar al backend para confirmar y actualizar MongoDB ──────────
+  if (external_reference) {
+    try {
+      console.log('📤 Enviando a /mercadopago/confirmar-pago...')
+      const res = await axiosInstance.post('/mercadopago/confirmar-pago', {
+        payment_id,
+        status,
+        external_reference,
+      })
+      console.log('✅ Respuesta del backend:', res.data)
+      notifySuccess('¡Pago exitoso! Ahora eres premium ✨', 'stars')
+      localStorage.removeItem('pending_payment_user_id')
+    } catch (err) {
+      const msg = err.response?.data?.error || err.message
+      console.error('❌ Error en confirmar-pago:', msg)
+      notifyError('El pago fue registrado, pero hubo un problema al actualizar. Contacta soporte.', 'warning')
     }
-  } catch (error) {
-    console.error('Error activando premium:', error)
+  } else {
+    console.warn('⚠️ No se encontró userId (ni URL, ni Pinia, ni localStorage). No se confirmará.')
   }
+
+  // ── PASO 3: Actualizar Pinia SIEMPRE (para UX inmediata) ──────────────────
+  if (auth.usuario) {
+    auth.$patch({
+      usuario: {
+        ...auth.usuario,
+        plan:             'mistico_pro',
+        estadoPlan:       'activo',
+        premiumActivo:    true,
+        estado:           1,
+        fechaPagoPremium: new Date().toISOString(),
+      }
+    })
+    console.log('🌟 Pinia actualizada → plan:', auth.usuario.plan)
+
+    // ── PASO 4: Sincronizar con localStorage ──────────────────────────────
+    try {
+      const stored = JSON.parse(localStorage.getItem('auth') || '{}')
+      stored.usuario = auth.usuario
+      localStorage.setItem('auth', JSON.stringify(stored))
+      console.log('💾 localStorage["auth"] actualizado')
+    } catch (e) {
+      console.warn('⚠️ Error al actualizar localStorage:', e)
+    }
+  } else {
+    console.warn('⚠️ auth.usuario es null en esta sesión (usuario no estaba logueado)')
+  }
+
+  // ── PASO 5: Countdown y redirección automática al login ───────────────────
+  countdown = setInterval(() => {
+    segundos.value--
+    if (segundos.value <= 0) {
+      clearInterval(countdown)
+      router.push({ path: '/' })
+    }
+  }, 1000)
+})
+
+onUnmounted(() => {
+  if (countdown) clearInterval(countdown)
 })
 </script>
-
