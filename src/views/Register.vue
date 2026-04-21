@@ -49,13 +49,7 @@
                 <input v-model="data.name" type="text" placeholder="Ej. Ana García" />
               </div>
             </div>
-            <div class="field">
-  <label>Edad</label>
-  <div class="input-wrapper">
-    <q-icon name="calendar_today" />
-    <input v-model="data.age" type="number" min="0" placeholder="Ej. 25" />
-  </div>
-</div>
+
             <div class="field">
               <label>Correo Electrónico</label>
               <div class="input-wrapper">
@@ -118,7 +112,6 @@ const data = ref({
   name: '', 
   email: '', 
   dob: '', 
-  age: '',   // 👈 nuevo campo
   password: '',
   confirmPassword: ''
 })
@@ -148,25 +141,6 @@ const submit = async () => {
     return
   }
 
-  // ── EDAD ────────────────────────────────────────────────────
-  if (data.value.age === '' || data.value.age === null || data.value.age === undefined) {
-    notifyError('La edad es obligatoria', 'error_outline')
-    return
-  }
-  const edadNum = Number(data.value.age)
-  if (isNaN(edadNum) || !Number.isInteger(edadNum)) {
-    notifyError('La edad debe ser un número válido', 'error_outline')
-    return
-  }
-  if (edadNum < 1) {
-    notifyError('La edad debe ser mayor a 0', 'error_outline')
-    return
-  }
-  if (edadNum < 18) {
-    notifyError('Debes ser mayor de 18 años para registrarte', 'error_outline')
-    return
-  }
-
   // ── FECHA DE NACIMIENTO ──────────────────────────────────────
   if (!data.value.dob) {
     notifyError('La fecha de nacimiento es obligatoria', 'error_outline')
@@ -182,32 +156,6 @@ const submit = async () => {
     return
   }
 
-  // ── COINCIDENCIA DE EDAD Y FECHA ─────────────────────────────
-  // Parseo seguro de "YYYY-MM-DD" a componentes enteros para evitar problemas de zonas horarias
-  const partesFecha = data.value.dob.split('-')
-  if (partesFecha.length === 3) {
-    const bYear = parseInt(partesFecha[0], 10)
-    const bMonth = parseInt(partesFecha[1], 10)
-    const bDay = parseInt(partesFecha[2], 10)
-
-    const today = new Date()
-    const currentYear = today.getFullYear()
-    const currentMonth = today.getMonth() + 1 // en JS los meses van de 0 a 11
-    const currentDay = today.getDate()
-
-    // Cálculo exacto de la edad real
-    let edadCalculada = currentYear - bYear
-    if (currentMonth < bMonth || (currentMonth === bMonth && currentDay < bDay)) {
-      edadCalculada-- // Aún no ha cumplido años este año
-    }
-
-    // Verificación final
-    if (edadCalculada !== edadNum) {
-      notifyError('La edad no coincide con la fecha de nacimiento. Verifica los datos.', 'error_outline')
-      return
-    }
-  }
-
   // ── EMAIL ────────────────────────────────────────────────────
   if (!data.value.email?.trim()) {
     notifyError('El correo electrónico es obligatorio', 'error_outline')
@@ -219,21 +167,13 @@ const submit = async () => {
     return
   }
 
-  // ── CONTRASEÑA ───────────────────────────────────────────────
+  // ── CONTRASEÑA ────────────────────────────────────────────
   if (!data.value.password) {
     notifyError('La contraseña es obligatoria', 'error_outline')
     return
   }
   if (data.value.password.length < 8) {
     notifyError('La contraseña debe tener mínimo 8 caracteres', 'error_outline')
-    return
-  }
-  if (!/[A-Z]/.test(data.value.password)) {
-    notifyError('La contraseña debe incluir al menos una letra mayúscula', 'error_outline')
-    return
-  }
-  if (!/\d/.test(data.value.password)) {
-    notifyError('La contraseña debe incluir al menos un número', 'error_outline')
     return
   }
 
@@ -249,28 +189,19 @@ const submit = async () => {
 
   cargando.value = true
   try {
-    const response = await axiosInstance.post("/usuario/register", payload)
-    notifySuccess('Usuario registrado correctamente. Bienvenido al universo.', 'person_add')
-    console.log(response.data)
+    await axiosInstance.post('/usuario/register', payload)
+    notifySuccess('¡Cuenta creada exitosamente! Redirigiendo al login...', 'person_add')
+    // Limpiar formulario y redirigir al login
+    data.value = { name: '', email: '', dob: '', password: '', confirmPassword: '' }
+    setTimeout(() => router.push({ name: 'loginUsuario' }), 1800)
   } catch (error) {
-    console.error(error)
-    const status  = error.response?.status
-    const msg     = error.response?.data?.error
-                 || error.response?.data?.message
-                 || error.response?.data?.msg
-
-    // Mensajes específicos según el tipo de error del backend
-    if (status === 400 && msg?.toLowerCase().includes('email')) {
-      notifyError('Este correo ya está registrado, intenta con uno diferente', 'error_outline')
-    } else if (status === 400 && msg?.toLowerCase().includes('duplicado')) {
-      notifyError('Este usuario ya existe en el sistema', 'error_outline')
-    } else if (status === 409) {
-      notifyError('Este correo o usuario ya está registrado, intenta con uno diferente', 'error_outline')
-    } else if (status >= 500) {
-      notifyError('Ocurrió un error en el servidor, intenta de nuevo más tarde', 'error_outline')
-    } else {
-      notifyError(msg || 'Error al registrar usuario, verifica los datos e intenta de nuevo', 'error_outline')
-    }
+    console.error('[register] Error:', error.response?.data || error.message)
+    // Mostrar EXACTAMENTE el mensaje del backend, sin filtros
+    const msg = error.response?.data?.error
+             || error.response?.data?.message
+             || error.response?.data?.msg
+             || 'Error al registrar. Verifica tus datos e intenta de nuevo.'
+    notifyError(msg, 'error_outline')
   } finally {
     cargando.value = false
   }

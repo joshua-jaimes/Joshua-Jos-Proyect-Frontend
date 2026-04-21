@@ -24,8 +24,11 @@ export const useAuthStore = defineStore("auth", () => {
 
             return true  // 👈 IMPORTANTE
         } catch (err) {
-            console.error("Error en login:", err)
-            error.value = err.response?.data?.error || err.response?.data?.message || err.response?.data?.msg || "Error al iniciar sesión"
+            console.error("Error en login:", err.response?.data || err.message)
+            error.value = err.response?.data?.error
+                       || err.response?.data?.msg
+                       || err.response?.data?.message
+                       || "Correo o contraseña incorrectos"
             return false // 👈 IMPORTANTE
         }
     }

@@ -1,42 +1,56 @@
 <template>
   <q-page class="flex flex-center" style="background: radial-gradient(circle at top, #0d2b0d 0%, #0a0410 70%); min-height: 100vh;">
     <div style="text-align:center; padding: 48px 24px; max-width: 500px;">
-      <q-icon name="check_circle" color="positive" size="5rem" style="filter: drop-shadow(0 0 20px #4ade80);" />
-      <h1 class="text-h4 text-white q-mt-lg q-mb-md" style="font-family:'Manrope',sans-serif;">
-        ¡Pago exitoso! 🎉
-      </h1>
-      <p class="text-grey-4 text-subtitle1 q-mb-xl">
-        Tu membresía <strong style="color:#4ade80">Místico Pro</strong> ha sido activada.<br>
-        El universo está listo para guiarte.
-      </p>
 
-      <!-- Contador de redirección -->
-      <p v-if="segundos > 0" class="text-grey-5 text-caption q-mb-lg">
-        Redirigiendo al login en {{ segundos }} segundos...
-      </p>
+      <!-- Confirmando pago -->
+      <template v-if="confirmando">
+        <q-spinner-dots color="positive" size="4rem" />
+        <h1 class="text-h5 text-white q-mt-lg q-mb-md" style="font-family:'Manrope',sans-serif;">
+          Confirmando tu pago...
+        </h1>
+        <p class="text-grey-4">Un momento, estamos activando tu membresía.</p>
+      </template>
 
-      <!-- Botones de Navegación -->
-      <div class="row q-mt-lg justify-center q-gutter-md">
-        <q-btn
-          unelevated
-          color="positive"
-          label="Ir al Dashboard"
-          icon="dashboard"
-          size="lg"
-          style="border-radius:12px; font-weight:700;"
-          @click="router.push({ name: 'dashboard' })"
-        />
+      <!-- Pago confirmado -->
+      <template v-else>
+        <q-icon name="check_circle" color="positive" size="5rem" style="filter: drop-shadow(0 0 20px #4ade80);" />
+        <h1 class="text-h4 text-white q-mt-lg q-mb-md" style="font-family:'Manrope',sans-serif;">
+          ¡Pago exitoso! 🎉
+        </h1>
+        <p class="text-grey-4 text-subtitle1 q-mb-xl">
+          Tu membresía <strong style="color:#4ade80">Místico Pro</strong> ha sido activada.<br>
+          El universo está listo para guiarte.
+        </p>
 
-        <q-btn
-          outline
-          color="white"
-          label="Volver al Login"
-          icon="login"
-          size="lg"
-          style="border-radius:12px; font-weight:700; border: 2px solid rgba(255,255,255,0.4);"
-          @click="router.push({ path: '/' })"
-        />
-      </div>
+        <!-- Contador de redirección -->
+        <p v-if="segundos > 0" class="text-grey-5 text-caption q-mb-lg">
+          Redirigiendo al login en {{ segundos }} segundos...
+        </p>
+
+        <!-- Botones de Navegación -->
+        <div class="row q-mt-lg justify-center q-gutter-md">
+          <q-btn
+            unelevated
+            color="positive"
+            label="Ir al Dashboard"
+            icon="dashboard"
+            size="lg"
+            style="border-radius:12px; font-weight:700;"
+            @click="router.push({ name: 'dashboard' })"
+          />
+
+          <q-btn
+            outline
+            color="white"
+            label="Volver al Login"
+            icon="login"
+            size="lg"
+            style="border-radius:12px; font-weight:700; border: 2px solid rgba(255,255,255,0.4);"
+            @click="router.push({ path: '/' })"
+          />
+        </div>
+      </template>
+
     </div>
   </q-page>
 </template>
@@ -53,22 +67,20 @@ const route  = useRoute()
 const auth   = useAuthStore()
 const { notifySuccess, notifyError } = useNotify()
 
-const segundos = ref(4)
+const segundos   = ref(4)
+const confirmando = ref(true)   // muestra spinner mientras confirma
 let countdown = null
 
 onMounted(async () => {
   // ── PASO 1: Leer parámetros que envía Mercado Pago ────────────────────────
-  // MP puede enviar: payment_id/status/external_reference  O  collection_id/collection_status
   const payment_id = route.query.payment_id
     || route.query.collection_id
     || 'sin_id'
 
-  // Si no viene status en URL, asumimos "approved" (usuario llegó desde pantalla éxito de MP)
   const status = route.query.status
     || route.query.collection_status
     || 'approved'
 
-  // external_reference lo manda MP cuando tiene parámetros; si no, usamos fallbacks
   const external_reference = route.query.external_reference
     || auth.usuario?._id
     || localStorage.getItem('pending_payment_user_id')
@@ -97,7 +109,7 @@ onMounted(async () => {
       notifyError('El pago fue registrado, pero hubo un problema al actualizar. Contacta soporte.', 'warning')
     }
   } else {
-    console.warn('⚠️ No se encontró userId (ni URL, ni Pinia, ni localStorage). No se confirmará.')
+    console.warn('⚠️ No se encontró userId. No se confirmará con backend.')
   }
 
   // ── PASO 3: Actualizar Pinia SIEMPRE (para UX inmediata) ──────────────────
@@ -114,7 +126,6 @@ onMounted(async () => {
     })
     console.log('🌟 Pinia actualizada → plan:', auth.usuario.plan)
 
-    // ── PASO 4: Sincronizar con localStorage ──────────────────────────────
     try {
       const stored = JSON.parse(localStorage.getItem('auth') || '{}')
       stored.usuario = auth.usuario
@@ -123,11 +134,11 @@ onMounted(async () => {
     } catch (e) {
       console.warn('⚠️ Error al actualizar localStorage:', e)
     }
-  } else {
-    console.warn('⚠️ auth.usuario es null en esta sesión (usuario no estaba logueado)')
   }
 
-  // ── PASO 5: Countdown y redirección automática al login ───────────────────
+  // ── PASO 4: Ocultar spinner y arrancar countdown ───────────────────────────
+  confirmando.value = false
+
   countdown = setInterval(() => {
     segundos.value--
     if (segundos.value <= 0) {
