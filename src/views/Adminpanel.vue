@@ -19,6 +19,10 @@
           <span class="mi nav-icon">manage_accounts</span>
           Pagos y Gestión de Usuarios
         </router-link>
+        <router-link to="/admin-pagos" class="nav-item">
+          <span class="mi nav-icon">receipt_long</span>
+          Historial de Pagos
+        </router-link>
         <div class="nav-section-label">Configuración</div>
         
         
@@ -177,15 +181,15 @@
               </table>
             </div>
 
-            <!-- 📄 Paginación Visual -->
-            <div class="q-mt-lg flex flex-center" style="padding: 20px 0; border-top: 1px solid rgba(255,255,255,0.05);">
+            <!-- 📄 Paginación Visual FORZADA -->
+            <div style="margin-top: 20px; display: flex; justify-content: center; padding-bottom: 20px;">
               <q-pagination
                 v-model="paginaActual"
-                :max="totalPaginas"
+                :max="totalPaginas || 1"
+                :max-pages="6"
                 direction-links
                 boundary-links
                 color="primary"
-                size="md"
               />
             </div>
           </div>
@@ -369,7 +373,7 @@ const usuariosFiltrados = computed(() => {
 
 // ── Paginación ────────────────────────────────────────────────
 const paginaActual = ref(1)
-const usuariosPorPagina = 10
+const usuariosPorPagina = 8
 
 const totalPaginas = computed(() => {
   return Math.ceil(usuariosFiltrados.value.length / usuariosPorPagina) || 1

@@ -144,15 +144,15 @@
               </table>
             </div>
 
-            <!-- 📄 Paginación Visual Solicitada -->
-            <div class="q-mt-lg flex flex-center" style="padding: 20px 0; border-top: 1px solid rgba(255,255,255,0.05);">
+            <!-- 📄 Paginación -->
+            <div class="q-mt-md flex flex-center q-pb-lg">
               <q-pagination
                 v-model="paginaActual"
-                :max="totalPaginas"
+                :max="totalPaginas || 1"
+                :max-pages="6"
                 direction-links
                 boundary-links
                 color="primary"
-                size="md"
               />
             </div>
 
@@ -307,7 +307,7 @@ const usuariosFiltrados = computed(() => {
 
 // ── Paginación ────────────────────────────────────────────────
 const paginaActual = ref(1)
-const usuariosPorPagina = 10
+const usuariosPorPagina = 8
 
 const totalPaginas = computed(() => {
   return Math.ceil(usuariosFiltrados.value.length / usuariosPorPagina) || 1
@@ -318,6 +318,13 @@ const usuariosPaginados = computed(() => {
   const fin = inicio + usuariosPorPagina
   return usuariosFiltrados.value.slice(inicio, fin)
 })
+
+watch(totalPaginas, (nuevoMax) => {
+  console.log("=== DIAGNÓSTICO PAGINACIÓN ===")
+  console.log("TOTAL PAGINAS:", nuevoMax)
+  console.log("Pagina actual:", paginaActual.value)
+  console.log("Total usuarios filtrados:", usuariosFiltrados.value.length)
+}, { immediate: true })
 
 // Volver a la página 1 cuando se realiza una búsqueda nueva
 watch(busqueda, () => {

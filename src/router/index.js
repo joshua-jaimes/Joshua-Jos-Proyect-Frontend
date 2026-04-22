@@ -6,6 +6,7 @@ import Dashboard from '../views/Dashboard.vue'
 import LecturaDiaria from '../views/LecturaDiaria.vue'
 import Adminpanel from '../views/Adminpanel.vue'
 import AdminUsuarios from '../views/AdminUsuarios.vue'
+import AdminPagos from '../views/AdminPagos.vue'
 import GeneradorNumeroPrincipal from '../views/GeneradorNumeroPrincipal.vue'
 import PerfilUsuario from '../views/PerfilUsuario.vue'
 import MembresiasYPagos from '../views/Membresias_y_Pagos.vue'
@@ -39,6 +40,11 @@ const routes = [
     path: '/admin-usuarios',
     name: 'AdminUsuarios',
     component: AdminUsuarios
+  },
+  {
+    path: '/admin-pagos',
+    name: 'AdminPagos',
+    component: AdminPagos
   },
   // Rutas de resultados de pago (sin layout, accesibles sin auth para que MP redirija)
   {
