@@ -207,7 +207,7 @@
 import { ref, computed, watch, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/Auth'
-import axios from 'axios'
+import axiosInstance from '../plugins/pluginAxios'  // ✅ usa baseURL correcta + interceptor de token
 import { useNotify } from '../composables/useNotify'
 
 const auth = useAuthStore()
@@ -227,19 +227,13 @@ const filtroMetodo = ref('')
 const paginaActual    = ref(1)
 const pagosPorPagina  = 8
 
-// ── Headers con token ──────────────────────────────────────────
-const getHeaders = () => {
-  const token = auth.token || ''
-  return { headers: { 'x-token': token, 'Content-Type': 'application/json' } }
-}
-
 // ── CARGAR PAGOS ───────────────────────────────────────────────
+// axiosInstance ya tiene la baseURL correcta (VITE_API_URL → Render) y agrega x-token
 const cargarPagos = async () => {
   try {
     cargando.value = true
     errorMsg.value = ''
-    const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000/api'
-    const res = await axios.get(`${baseUrl}/pagos`, getHeaders())
+    const res = await axiosInstance.get('/pagos')
     pagos.value = res.data.pagos ?? res.data ?? []
   } catch (err) {
     errorMsg.value = 'No se pudo cargar el historial de pagos. Verifica que el servidor esté activo.'
