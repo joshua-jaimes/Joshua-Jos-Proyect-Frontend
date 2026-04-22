@@ -4,7 +4,7 @@ import { useAuthStore } from "../stores/Auth.js";
 const axiosInstance = axios.create({
   // Desarrollo: VITE_API_URL=http://localhost:3000/api  (en .env.local del frontend)
   // Producción: VITE_API_URL=https://tu-backend.onrender.com/api  (en Vercel env vars)
-  baseURL: import.meta.env.VITE_API_URL || 'https://tu-backend.onrender.com/api',
+  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3000/api',
   headers: {
     'Content-Type': 'application/json'
   }
