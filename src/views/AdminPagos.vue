@@ -1,45 +1,4 @@
 <template>
-  <q-layout view="lHh lpR fFf" class="app-wrap">
-
-    <!-- ══════════ SIDEBAR ══════════ -->
-    <q-drawer :model-value="true" :width="256" :breakpoint="768" side="left" class="sidebar" persistent>
-      <div class="sidebar-logo">
-        <div class="logo-icon">N</div>
-        <span class="logo-text">Numera<span>AI</span></span>
-      </div>
-
-      <nav class="sidebar-nav">
-        <div class="nav-section-label">Principal</div>
-        <router-link :to="{ name: 'adminpanel' }" class="nav-item">
-          <span class="mi nav-icon">dashboard</span>
-          Panel de Control
-        </router-link>
-        <router-link to="/admin-usuarios" class="nav-item">
-          <span class="mi nav-icon">manage_accounts</span>
-          Gestión de Usuarios
-        </router-link>
-        <router-link to="/admin-pagos" class="nav-item active">
-          <span class="mi nav-icon">receipt_long</span>
-          Historial de Pagos
-        </router-link>
-      </nav>
-
-      <div class="sidebar-user">
-        <div class="user-row">
-          <div class="user-avatar-wrap">
-            <img class="user-avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAc2t8RIA4Yt_l6AH0ZpVoAvuIc6kWHHKVBhyw9ljvSz1E4mScc-mJgcO4vHh39BY4GkVBfpyJsFBk4k7Y35oxyEuj_6SMEJpBf7aQnXgIaH18EXR-sJGy0MG1LJaRf6HAYc_gGCxs8C1aZIUUa2L2AeetdydM2QLY6P55cnvIgc9wqZT39EQqXMbKTUUt56BxNHjYtsmOK0fa_d0UwL9IND03jmUvcf6DaO81FmH5xrA6m2h8SozovWP6gut-Cbuz2yjG7Lq169VI" alt="Admin"/>
-            <div class="user-online"></div>
-          </div>
-          <div>
-            <div class="user-name">Admin Principal</div>
-            <div class="user-email">admin@numera.ai</div>
-          </div>
-        </div>
-      </div>
-    </q-drawer>
-
-    <!-- ══════════ MAIN ══════════ -->
-    <q-page-container>
       <div class="main-area">
 
         <!-- Top Header -->
@@ -198,9 +157,6 @@
           </div>
         </div>
       </div>
-    </q-page-container>
-
-  </q-layout>
 </template>
 
 <script setup>
@@ -364,7 +320,7 @@ onMounted(() => cargarPagos())
 .header-title { font-size:20px; font-weight:700; color:#fff; }
 .header-sub   { font-size:12px; color:#64748b; margin-top:2px; }
 
-.content-scroll { flex:1; overflow-y:auto; padding:32px; display:flex; flex-direction:column; gap:24px; padding-bottom:80px; }
+.content-scroll { flex:1; overflow-y:auto; padding:32px; flex-direction:column; gap:24px; padding-bottom:80px; }
 
 /* KPI mini row */
 .kpi-row { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; }

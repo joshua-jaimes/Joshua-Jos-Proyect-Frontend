@@ -1,41 +1,4 @@
 <template>
-  <q-layout view="lHh lpR fFf" class="app-wrap">
-
-    <!-- ══════════ SIDEBAR ══════════ -->
-    <q-drawer :model-value="true" :width="256" :breakpoint="768" side="left" class="sidebar" persistent>
-      <div class="sidebar-logo">
-        <div class="logo-icon">N</div>
-        <span class="logo-text">Numera<span>AI</span></span>
-      </div>
-
-      <nav class="sidebar-nav">
-        <div class="nav-section-label">Principal</div>
-        <router-link :to="{ name: 'adminpanel' }" class="nav-item">
-          <span class="mi nav-icon">dashboard</span>
-          Panel de Control
-        </router-link>
-        <router-link to="/admin-usuarios" class="nav-item active">
-          <span class="mi nav-icon">manage_accounts</span>
-          Pagos y Gestión de Usuarios
-        </router-link>
-      </nav>
-
-      <div class="sidebar-user">
-        <div class="user-row">
-          <div class="user-avatar-wrap">
-            <img class="user-avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAc2t8RIA4Yt_l6AH0ZpVoAvuIc6kWHHKVBhyw9ljvSz1E4mScc-mJgcO4vHh39BY4GkVBfpyJsFBk4k7Y35oxyEuj_6SMEJpBf7aQnXgIaH18EXR-sJGy0MG1LJaRf6HAYc_gGCxs8C1aZIUUa2L2AeetdydM2QLY6P55cnvIgc9wqZT39EQqXMbKTUUt56BxNHjYtsmOK0fa_d0UwL9IND03jmUvcf6DaO81FmH5xrA6m2h8SozovWP6gut-Cbuz2yjG7Lq169VI" alt="Admin"/>
-            <div class="user-online"></div>
-          </div>
-          <div>
-            <div class="user-name">Admin Principal</div>
-            <div class="user-email">admin@numera.ai</div>
-          </div>
-        </div>
-      </div>
-    </q-drawer>
-
-    <!-- ══════════ MAIN ══════════ -->
-    <q-page-container>
       <div class="main-area">
 
         <!-- Top Header -->
@@ -127,8 +90,6 @@
                         <button class="icon-btn btn-gold" @click="abrirModificar(usuario)" title="Editar">
                           <span class="mi" style="font-size:16px;">edit</span>
                         </button>
-                        <!-- Toggle estado -->
-                       
                         <!-- Toggle plan -->
                         <button class="icon-btn btn-purple" @click="togglePlan(usuario)" :title="usuario.estado === 1 ? 'Pasar a Gratuito' : 'Activar Premium'">
                           <span class="mi" style="font-size:16px;">{{ usuario.estado === 1 ? 'star_border' : 'star' }}</span>
@@ -142,25 +103,23 @@
                   </tr>
                 </tbody>
               </table>
-            </div>
+            </div> <!-- Cierra tabla-wrap -->
+          </div> <!-- Cierra tabla-card -->
 
-            <!-- 📄 Paginación -->
-            <div class="q-mt-md flex flex-center q-pb-lg">
-              <q-pagination
-                v-model="paginaActual"
-                :max="totalPaginas || 1"
-                :max-pages="6"
-                direction-links
-                boundary-links
-                color="primary"
-              />
-            </div>
-
+          <!-- 📄 Paginación -->
+          <div class="q-mt-md flex flex-center q-pb-lg">
+            <q-pagination
+              v-model="paginaActual"
+              :max="totalPaginas || 1"
+              :max-pages="6"
+              direction-links
+              boundary-links
+              color="primary"
+            />
           </div>
-        </div>
-      </div>
-    </q-page-container>
 
+        </div> <!-- Cierra content-scroll -->
+      </div> <!-- Cierra main-area -->
     <!-- ══════════ MODAL CREAR / EDITAR (HTML puro) ══════════ -->
     <div v-if="modalOpen" class="modal-overlay" @click.self="modalOpen = false">
       <div class="modal-box">
@@ -258,8 +217,6 @@
         </div>
       </div>
     </div>
-
-  </q-layout>
 </template>
 
 <script setup>
@@ -294,7 +251,6 @@ const formUser = ref({
   id: '', nombre: '', email: '', password: '',
   edad: 20, fechanacimiento: '2000-01-01', estado: 0
 })
-
 // ── Filtro búsqueda ───────────────────────────────────────────
 const usuariosFiltrados = computed(() => {
   if (!busqueda.value.trim()) return usuarios.value
@@ -330,6 +286,10 @@ watch(totalPaginas, (nuevoMax) => {
 watch(busqueda, () => {
   paginaActual.value = 1
 })
+
+
+
+
 
 // ── Headers con token ─────────────────────────────────────────
 const getHeaders = () => {
@@ -552,7 +512,7 @@ onMounted(() => {
 .header-title { font-size:20px; font-weight:700; color:#fff; }
 .header-sub   { font-size:12px; color:#64748b; margin-top:2px; }
 
-.content-scroll { flex:1; overflow-y:auto; padding:32px; display:flex; flex-direction:column; gap:32px; padding-bottom:80px; }
+.content-scroll { flex:1; overflow-y:auto; padding:32px; /* display:flex; */ flex-direction:column; gap:32px; padding-bottom:80px; }
 
 .badge { display:inline-flex; align-items:center; gap:6px; padding:4px 10px; border-radius:999px; font-size:12px; font-weight:500; white-space:nowrap; }
 .badge-green  { background:rgba(34,197,94,0.1);  color:#22c55e; }

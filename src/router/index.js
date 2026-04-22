@@ -32,19 +32,25 @@ const routes = [
     component: Register
   },
   {
-    path: '/adminpanel',
-    name: 'adminpanel',
-    component: Adminpanel
-  },
-  {
-    path: '/admin-usuarios',
-    name: 'AdminUsuarios',
-    component: AdminUsuarios
-  },
-  {
-    path: '/admin-pagos',
-    name: 'AdminPagos',
-    component: AdminPagos
+    path: '/admin-group',
+    component: () => import('../layouts/AdminLayout.vue'),
+    children: [
+      {
+        path: '/adminpanel',
+        name: 'adminpanel',
+        component: Adminpanel
+      },
+      {
+        path: '/admin-usuarios',
+        name: 'AdminUsuarios',
+        component: AdminUsuarios
+      },
+      {
+        path: '/admin-pagos',
+        name: 'AdminPagos',
+        component: AdminPagos
+      }
+    ]
   },
   // Rutas de resultados de pago (sin layout, accesibles sin auth para que MP redirija)
   {

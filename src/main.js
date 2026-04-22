@@ -2,7 +2,7 @@ import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 
-import { Quasar, QIcon, QLayout, QDrawer, QPageContainer, Notify } from 'quasar'
+import { Quasar, QIcon, QLayout, QDrawer, QPageContainer, QPagination, Notify } from 'quasar'
 import 'quasar/src/css/index.sass'
 import '@quasar/extras/material-icons/material-icons.css'
 
@@ -24,7 +24,7 @@ app.use(router)
 // Quasar — componentes registrados globalmente para todas las vistas
 app.use(Quasar, {
   plugins: { Notify },
-  components: { QIcon, QLayout, QDrawer, QPageContainer }
+  components: { QIcon, QLayout, QDrawer, QPageContainer, QPagination }
 })
 
 app.mount('#app')
