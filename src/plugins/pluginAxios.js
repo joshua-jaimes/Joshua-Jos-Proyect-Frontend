@@ -1,14 +1,22 @@
 import axios from 'axios';
 import { useAuthStore } from "../stores/Auth.js";
 
+// URL del backend: se lee de VITE_API_URL (variable de entorno en Vercel/local).
+// Si no está definida, usa la URL real de Render como garantía.
+// ⚠️ SIEMPRE define VITE_API_URL en Vercel → Settings → Environment Variables
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://joshua-jos-proyect-backend.onrender.com/api'
+
+if (!import.meta.env.VITE_API_URL) {
+  console.warn('⚠️ VITE_API_URL no definida. Usando fallback:', API_BASE_URL)
+}
+
 const axiosInstance = axios.create({
-  // Desarrollo: VITE_API_URL=http://localhost:3000/api  (en .env.local del frontend)
-  // Producción: VITE_API_URL=https://tu-backend.onrender.com/api  (en Vercel env vars)
-  baseURL: import.meta.env.VITE_API_URL,
+  baseURL: API_BASE_URL,
   headers: {
     'Content-Type': 'application/json'
   }
-});
+})
+
 
 // Interceptor para añadir el header x-token
 axiosInstance.interceptors.request.use(
